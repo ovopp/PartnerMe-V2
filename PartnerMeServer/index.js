@@ -5,6 +5,15 @@ const PORT = 3000;
 var createError = require('http-errors');
 var logger = require('morgan');
 
+const mysql = require('mysql');
+
+var con = mysql.createConnection({
+    host: "partnerme.database.windows.net",
+    user: "partnermeteam",
+    password: "df67POIL!#",
+    database: "PartnerMe"
+});
+
 app.use(express.json());
 
 app.get('/', (request, response) => {
@@ -45,7 +54,16 @@ app.post('/auth/create', (request, response)=>{
 
 // Matching Service
 app.get('/matching/getmatch', (request, response) => {
-    response.send('Your matches');
+    con.connect(function(err) {
+	if (err) throw err;
+	console.log("Connected!");
+	var sql = "SELECT * FROM users";
+	con.query(sql, function (err, result, fields) {
+	    if (err) throw err;
+	    console.log("Got list");
+	    response.send(result);
+	});
+    });
 });
 
 app.post('/matching/sendmessage', (request, response)=>{
