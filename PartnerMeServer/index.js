@@ -104,18 +104,18 @@ app.listen(PORT, () => console.log(`Express server currently running on port ${P
 
 function queryDatabase() {
 
-  // Read all rows from table
-  const request = new Request(
-    `SELECT * FROM users`,
-      (err, rowCount, result) => {
-      if (err) {
-          console.error(err.message);
-	  response.send(result);
-      } else {
-        console.log(`${rowCount} row(s) returned`);
-      }
-    }
-  );
+    // Read all rows from table
+    const request = new Request(
+	`SELECT * FROM users`,
+	(err, rowCount, result) => {
+	    if (err) {
+		console.error(err.message);
+	    } else {
+		console.log(`${rowCount} row(s) returned`);
+		response.send(result);
+	    }
+	}
+    );
 
 /*
   request.on("row", columns => {
