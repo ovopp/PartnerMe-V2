@@ -5,14 +5,23 @@ const PORT = 3000;
 var createError = require('http-errors');
 var logger = require('morgan');
 
-const mysql = require('mysql');
+const { Connection, Request } = require("tedious");
 
-var con = mysql.createConnection({
-    host: "partnerme.database.windows.net",
-    user: "partnermeteam",
-    password: "df67POIL!#",
-    database: "PartnerMe"
-});
+// Create connection to database
+const config = {
+  authentication: {
+    options: {
+      userName: "partnermeteam",
+      password: "df67POIL!#"
+    },
+    type: "default"
+  },
+  server: "partnerme.database.windows.net",
+  options: {
+    database: "PartnerMe",
+    encrypt: true
+  }
+};
 
 app.use(express.json());
 
@@ -54,15 +63,16 @@ app.post('/auth/create', (request, response)=>{
 
 // Matching Service
 app.get('/matching/getmatch', (request, response) => {
-    con.connect(function(err) {
-	if (err) throw err;
-	console.log("Connected!");
-	var sql = "SELECT * FROM users";
-	con.query(sql, function (err, result, fields) {
-	    if (err) throw err;
-	    console.log("Got list");
-	    response.send(result);
-	});
+    const connection = new Connection(config);
+    console.log("connection made");
+    // Attempt to connect and execute queries if connection goes through
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	} else {
+	    queryDatabase();
+	}
     });
 });
 
@@ -90,3 +100,28 @@ app.use(express.urlencoded({
 }));
 
 app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
+
+
+function queryDatabase() {
+
+  // Read all rows from table
+  const request = new Request(
+    `SELECT * FROM users`,
+    (err, rowCount) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(`${rowCount} row(s) returned`);
+      }
+    }
+  );
+
+/*
+  request.on("row", columns => {
+    columns.forEach(column => {
+      console.log("%s\t%s", column.metadata.colName, column.value);
+    });
+  });*/
+
+    connection.execSql(request);
+}
