@@ -71,7 +71,7 @@ app.get('/matching/getmatch', (request, response) => {
 	    console.log("error");
 	    console.error(err.message);
 	} else {
-	    queryDatabase();
+    connection.execSql(queryDatabase());
 	}
     });
 });
@@ -116,7 +116,7 @@ function queryDatabase() {
       }
     }
   );
-
+return request;
 /*
   request.on("row", columns => {
     columns.forEach(column => {
@@ -124,5 +124,4 @@ function queryDatabase() {
     });
   });*/
 
-    connection.execSql(request);
 }
