@@ -107,9 +107,10 @@ function queryDatabase() {
   // Read all rows from table
   const request = new Request(
     `SELECT * FROM users`,
-    (err, rowCount) => {
+      (err, rowCount, result) => {
       if (err) {
-        console.error(err.message);
+          console.error(err.message);
+	  response.send(result);
       } else {
         console.log(`${rowCount} row(s) returned`);
       }
