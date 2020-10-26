@@ -27,6 +27,7 @@ connection.on("connect", err => {
     queryDatabase();
   }
 });
+
 function queryDatabase() {
 
   // Creates table
