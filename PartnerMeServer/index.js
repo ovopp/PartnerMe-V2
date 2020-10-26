@@ -71,7 +71,7 @@ app.get('/matching/getmatch', (request, response) => {
 	    console.log("error");
 	    console.error(err.message);
 	} else {
-	    queryDatabase();
+    connection.execSql(queryDatabase());
 	}
     });
 });
@@ -103,7 +103,6 @@ app.listen(PORT, () => console.log(`Express server currently running on port ${P
 
 
 function queryDatabase() {
-
     // Read all rows from table
     const request = new Request(
 	`SELECT * FROM users`,
@@ -116,7 +115,6 @@ function queryDatabase() {
 	    }
 	}
     );
-
 /*
   request.on("row", columns => {
     columns.forEach(column => {
@@ -124,5 +122,4 @@ function queryDatabase() {
     });
   });*/
 
-    connection.execSql(request);
 }
