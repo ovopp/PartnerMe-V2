@@ -22,27 +22,27 @@ Solving the problem of finding the perfect study partner.
 - Azure SQL server
 ## Tables:
 - users
--- ID INT NOT NULL
--- name VARCHAR(255)
--- class VARCHAR(255)
--- language VARCHAR(255)
--- availability VARCHAR(255)
--- hobbies NVARCHAR(max)
--- PRIMARY KEY (ID)
+  - ID INT NOT NULL
+  - name VARCHAR(255)
+  - class VARCHAR(255)
+  - language VARCHAR(255)
+  - availability VARCHAR(255)
+  - hobbies NVARCHAR(max)
+  - PRIMARY KEY (ID)
 - auth
--- ID INT NOT NULL
--- name VARCHAR(255)
--- password VARCHAR(255)
--- PRIMARY KEY (ID)
+  - ID INT NOT NULL
+  - name VARCHAR(255)
+  - password VARCHAR(255)
+  - PRIMARY KEY (ID)
 - Meetings
--- ID INT NOT NULL
--- user1_ID INT
--- user2_ID INT
--- transcript NVARCHAR(max)
--- images NVARCHAR(max)
--- PRIMARY KEY (ID)
--- FOREIGN KEY (user1_ID) REFERENCES users(ID)
--- FOREIGN KEY (user2_ID) REFERENCES users(ID)
+  - ID INT NOT NULL
+  - user1_ID INT
+  - user2_ID INT
+  - transcript NVARCHAR(max)
+  - images NVARCHAR(max)
+  - PRIMARY KEY (ID)
+  - FOREIGN KEY (user1_ID) REFERENCES users(ID)
+  - FOREIGN KEY (user2_ID) REFERENCES users(ID)
 
 Group members:
 Vincent Yan
