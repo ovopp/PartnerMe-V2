@@ -72,6 +72,7 @@ app.get('/matching/getmatch', (request, response) => {
 	    console.log("error");
 	    console.error(err.message);
 	} else {
+<<<<<<< HEAD
     const request = new Request(
       `SELECT * FROM test`,
       (err, rowCount, rows) => {
@@ -95,6 +96,9 @@ app.get('/matching/getmatch', (request, response) => {
       }
     );
 	    connection.execSql(request);
+=======
+    connection.execSql(queryDatabase());
+>>>>>>> a29ae341d14851de4d19906f85aef0f601aa55da
 	}
     });
 });
@@ -125,6 +129,7 @@ app.use(express.urlencoded({
 app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
 
 
+<<<<<<< HEAD
 // function queryDatabase() {
 
 //   // Read all rows from table
@@ -142,3 +147,26 @@ app.listen(PORT, () => console.log(`Express server currently running on port ${P
 
 //   return request;
 // }
+=======
+function queryDatabase() {
+    // Read all rows from table
+    const request = new Request(
+	`SELECT * FROM users`,
+	(err, rowCount, result) => {
+	    if (err) {
+		console.error(err.message);
+	    } else {
+		console.log(`${rowCount} row(s) returned`);
+		response.send(result);
+	    }
+	}
+    );
+/*
+  request.on("row", columns => {
+    columns.forEach(column => {
+      console.log("%s\t%s", column.metadata.colName, column.value);
+    });
+  });*/
+
+}
+>>>>>>> a29ae341d14851de4d19906f85aef0f601aa55da
