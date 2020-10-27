@@ -19,7 +19,8 @@ const config = {
   server: "partnerme.database.windows.net",
   options: {
     database: "PartnerMe",
-    encrypt: true
+    encrypt: true,
+    rowCollectionOnRequestCompletion: true
   }
 };
 
@@ -63,7 +64,7 @@ app.post('/auth/create', (request, response)=>{
 
 // Matching Service
 app.get('/matching/getmatch', (request, response) => {
-    const connection = new Connection(config);
+  const connection = new Connection(config);
     console.log("connection made");
     // Attempt to connect and execute queries if connection goes through
     connection.on("connect", err => {
@@ -71,7 +72,29 @@ app.get('/matching/getmatch', (request, response) => {
 	    console.log("error");
 	    console.error(err.message);
 	} else {
-	    queryDatabase();
+    const request = new Request(
+      `SELECT * FROM test`,
+      (err, rowCount, rows) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          var return_list = [];
+          console.log(`${rowCount} row(s) returned`);
+          for(let i = 0 ; i < rows.length ; i++){
+            var item = {
+              "Name" : rows[i][0].value ,
+              "Class" : rows[i][1].value ,
+              "Language" : rows[i][2].value,
+              "Availability" : rows[i][3].value,
+              "Hobbies" : rows[i][4].value ,
+            }
+            return_list.push(item);
+          }
+          response.send(return_list);
+        }
+      }
+    );
+	    connection.execSql(request);
 	}
     });
 });
@@ -102,26 +125,20 @@ app.use(express.urlencoded({
 app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
 
 
-function queryDatabase() {
+// function queryDatabase() {
 
-  // Read all rows from table
-  const request = new Request(
-    `SELECT * FROM users`,
-    (err, rowCount) => {
-      if (err) {
-        console.error(err.message);
-      } else {
-        console.log(`${rowCount} row(s) returned`);
-      }
-    }
-  );
+//   // Read all rows from table
+//   const request = new Request(
+//     `SELECT * FROM test`,
+//     (err, rowCount, rows) => {
+//       if (err) {
+//         console.error(err.message);
+//       } else {
+//         console.log(`${rowCount} row(s) returned`);
+//         console.log(rows);
+//       }
+//     }
+//   );
 
-/*
-  request.on("row", columns => {
-    columns.forEach(column => {
-      console.log("%s\t%s", column.metadata.colName, column.value);
-    });
-  });*/
-
-    connection.execSql(request);
-}
+//   return request;
+// }
