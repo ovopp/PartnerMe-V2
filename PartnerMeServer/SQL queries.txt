@@ -1,0 +1,17 @@
+Based on id example:
+var sql = "SELECT * FROM users WHERE id = " + id;
+var sql = "SELECT * FROM users WHERE language = " + language + " AND class = " + class;
+
+All users with a hobby
+var sql = "SELECT * FROM users WHERE hobbies LIKE %," + hobby + ",%";
+
+All users with two hobbies (can be expanded with any number)
+var sql = "SELECT * FROM users WHERE hobbies LIKE %," + hobby1 + ",% AND hobbies LIKE %," + hobby2 + ",%";
+
+
+Get user id for name and password
+var sql = "SELECT * FROM auth WHERE name = " + name + " AND password = " + password;
+
+
+Get meetings of user
+var sql = "SELECT * FROM meetings WHERE user1_ID = " + userID + " OR user2_ID = " + userID;
