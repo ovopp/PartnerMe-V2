@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 var createError = require('http-errors');
+var similarity = require( 'compute-cosine-similarity' );
 var logger = require('morgan');
 
 const { Connection, Request } = require("tedious");
@@ -58,14 +59,74 @@ app.post('/auth/external', (request, response)=>{
 app.post('/auth/create', (request, response)=>{
     // check is user_id is already in db, return error
     // connect to auth db and update with user_id and password
+    const connection = new Connection(config);
     console.log(request.body);
-    response.send("create new account");
+    var reqString = `INSERT INTO test (name, class, language, availability, hobbies) VALUES('${request.body.Name}', '${request.body.Class}', '${request.body.Language}','${request.body.Availability}', '${request.body.Hobbies}')`;
+    connection.on("connect", err => {
+      if (err) {
+        console.log("error");
+        console.error(err.message);
+      }
+      else {
+        const sqlreq = new Request(
+          reqString, 
+          (err, rowCount, rows) => {
+            if (err) {
+              console.error(err.message);
+            } else {
+              response.send("success");
+              connection.close();
+            }
+          }
+        );
+        connection.execSql(sqlreq);
+      }
+    });
 });
 
+app.post('/auth/getuser', (request, response)=>{
+    const connection = new Connection(config);
+    // var userName = request.body.Name;
+    console.log(request.body.Name);
+    var reqString = `SELECT * FROM test WHERE name = '${request.body.Name}'`;
+    // var reqString = "INSERT INTO test (name, class, language, availability, hobbies) VALUES ('Vincent Yan', 'CPEN321', 'English', 'Morning', '{[games, sports, dogs]}')";
+    connection.on("connect", err => {
+      if (err) {
+        console.log("error");
+        console.error(err.message);
+      }
+      else {
+        const sqlreq = new Request(
+          reqString, 
+          (err, rowCount, rows) => {
+            if (err) {
+              console.error(err.message);
+            } else {
+              console.log(rows);
+              connection.close();
+            }
+          }
+        );
+        connection.execSql(sqlreq);
+      }
+    });
+});
+var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUES (Vincent Yan, CPEN321, English, Morning, {[games,sports,television]})';
+
+
 // Matching Service
-app.get('/matching/getmatch', (request, response) => {
+
+/**
+ * TODO: change the request.body.Name to a unique identifier for the user class
+ * TODO: add cosine sim to sort and add limit thresholds
+ * 
+ * gets matches based request body name and class.
+ * 
+ */
+app.post('/matching/getmatch', (request, response) => {
   const connection = new Connection(config);
     console.log("connection made");
+    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE Name = '${request.body.Name}')`;
     // Attempt to connect and execute queries if connection goes through
     connection.on("connect", err => {
 	if (err) {
@@ -73,7 +134,7 @@ app.get('/matching/getmatch', (request, response) => {
 	    console.error(err.message);
 	} else {
     const request = new Request(
-      `SELECT * FROM test`,
+     reqString,
       (err, rowCount, rows) => {
         if (err) {
           console.error(err.message);
@@ -91,6 +152,7 @@ app.get('/matching/getmatch', (request, response) => {
             return_list.push(item);
           }
           response.send(return_list);
+          connection.close();
         }
       }
     );
