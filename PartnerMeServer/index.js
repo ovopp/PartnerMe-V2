@@ -27,6 +27,35 @@ const config = {
 
 app.use(express.json());
 
+/**
+ * simple endpoint to run SQL scripts to change DB
+ */
+app.get('/dbproxy' , (request, response)=>{
+  const connection = new Connection(config);
+  var reqString = `ALTER TABLE test DROP COLUMN ID`;
+  connection.on("connect", err => {
+    if (err) {
+      console.log("error");
+      console.error(err.message);
+    }
+    else {
+      const sqlreq = new Request(
+        reqString, 
+        (err, rowCount) => {
+          if (err) {
+            console.error(err.message);
+          } else {
+            console.log("success");
+            connection.close();
+          }
+        }
+      );
+      connection.execSql(sqlreq);
+    }
+  });
+});
+
+
 app.get('/', (request, response) => {
     response.send('Hello');
 });
@@ -63,15 +92,15 @@ app.post('/auth/check', (request, response)=>{
       else {
         const sqlreq = new Request(
           reqString, 
-          (err, rowCount, rows) => {
+          (err, rowCount) => {
             if (err) {
               console.error(err.message);
             } else {
               if(rowCount != 0){
-                response.send("user found");
+                response.send({"success" : false});
               }
               else{
-                response.send("new user");
+                response.send({"success" : true});
               }
               connection.close();
             }
@@ -173,7 +202,8 @@ app.post('/matching/getmatch', (request, response) => {
               "Class" : rows[i][1].value ,
               "Language" : rows[i][2].value,
               "Availability" : rows[i][3].value,
-              "Hobbies" : rows[i][4].value ,
+              "Hobbies" : rows[i][4].value,
+              "Email" : rows[i][5].value
             }
             return_list.push(item);
           }
@@ -182,6 +212,11 @@ app.post('/matching/getmatch', (request, response) => {
         }
       }
     );
+      request.on("row", columns => {
+        columns.forEach(column => {
+          console.log("%s\t%s", column.metadata.colName, column.value);
+        });
+      });
 	    connection.execSql(request);
 	}
     });
