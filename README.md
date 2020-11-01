@@ -30,6 +30,7 @@ Solving the problem of finding the perfect study partner.
   - availability VARCHAR(255)
   - hobbies NVARCHAR(max)
   - PRIMARY KEY (ID)
+  - UNIQUE (email)
 - meetings
   - ID INT NOT NULL IDENTITY
   - user1_ID INT
