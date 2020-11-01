@@ -44,6 +44,9 @@ Solving the problem of finding the perfect study partner.
   - user2_ID INT
   - date DATETIME
   - message VARCHAR(255)
+  - PRIMARY KEY (ID)
+  - FOREIGN KEY (user1_ID) REFERENCES users(ID)
+  - FOREIGN KEY (user2_ID) REFERENCES users(ID)
 
 Group members:
 Vincent Yan
