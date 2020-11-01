@@ -38,6 +38,15 @@ Solving the problem of finding the perfect study partner.
   - PRIMARY KEY (ID)
   - FOREIGN KEY (user1_ID) REFERENCES users(ID)
   - FOREIGN KEY (user2_ID) REFERENCES users(ID)
+- messages
+  - ID INT NOT NULL
+  - user1_ID INT
+  - user2_ID INT
+  - date DATETIME
+  - message VARCHAR(255)
+  - PRIMARY KEY (ID)
+  - FOREIGN KEY (user1_ID) REFERENCES users(ID)
+  - FOREIGN KEY (user2_ID) REFERENCES users(ID)
 
 Group members:
 Vincent Yan
