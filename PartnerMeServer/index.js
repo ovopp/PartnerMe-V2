@@ -182,7 +182,7 @@ var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUE
 app.post('/matching/getmatch', (request, response) => {
   const connection = new Connection(config);
     console.log("connection made");
-    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE Name = '${request.body.Name}')`;
+    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${request.body.email}')`;
     // Attempt to connect and execute queries if connection goes through
     connection.on("connect", err => {
 	if (err) {
