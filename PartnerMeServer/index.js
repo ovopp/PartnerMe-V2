@@ -50,10 +50,36 @@ app.post('/auth/authorize', (request, response)=>{
 });
 
 
-app.post('/auth/external', (request, response)=>{
+app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
-    console.log(request.body);
-    response.send("external services");
+    console.log(request.body.email);
+    const connection = new Connection(config);
+    var reqString = `SELECT * FROM test WHERE email = '${request.body.Class}'`;
+    connection.on("connect", err => {
+      if (err) {
+        console.log("error");
+        console.error(err.message);
+      }
+      else {
+        const sqlreq = new Request(
+          reqString, 
+          (err, rowCount, rows) => {
+            if (err) {
+              console.error(err.message);
+            } else {
+              if(rowCount != 0){
+                response.send("user found");
+              }
+              else{
+                response.send("new user");
+              }
+              connection.close();
+            }
+          }
+        );
+        connection.execSql(sqlreq);
+      }
+    });
 });
 
 app.post('/auth/create', (request, response)=>{
