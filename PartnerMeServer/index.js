@@ -116,7 +116,7 @@ app.post('/auth/create', (request, response)=>{
     // connect to auth db and update with user_id and password
     const connection = new Connection(config);
     console.log(request.body);
-    var reqString = `INSERT INTO test (name, class, language, availability, hobbies) VALUES('${request.body.Name}', '${request.body.Class}', '${request.body.Language}','${request.body.Availability}', '${request.body.Hobbies}')`;
+    var reqString = `INSERT INTO test (name, class, language, availability, hobbies, email) VALUES('${request.body.Name}', '${request.body.Class}', '${request.body.Language}','${request.body.Availability}', '${request.body.Hobbies}, '${request.body.Email}')`;
     connection.on("connect", err => {
       if (err) {
         console.log("error");
@@ -129,7 +129,7 @@ app.post('/auth/create', (request, response)=>{
             if (err) {
               console.error(err.message);
             } else {
-              response.send("success");
+              response.send({"success": true});
               connection.close();
             }
           }
