@@ -83,7 +83,7 @@ app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
     console.log(request.body.email);
     const connection = new Connection(config);
-    var reqString = `SELECT * FROM test WHERE email = '${request.body.Class}'`;
+    var reqString = `SELECT * FROM test WHERE email = '${request.body.email}'`;
     connection.on("connect", err => {
       if (err) {
         console.log("error");
@@ -97,10 +97,10 @@ app.post('/auth/check', (request, response)=>{
               console.error(err.message);
             } else {
               if(rowCount != 0){
-                response.send({"success" : false});
+                response.send({"success" : true});
               }
               else{
-                response.send({"success" : true});
+                response.send({"success" : false});
               }
               connection.close();
             }
