@@ -128,6 +128,7 @@ app.post('/auth/create', (request, response)=>{
           (err, rowCount, rows) => {
             if (err) {
               console.error(err.message);
+              response.send({"success" : false});
             } else {
               response.send({"success": true});
               connection.close();
@@ -207,7 +208,7 @@ app.post('/matching/getmatch', (request, response) => {
             }
             return_list.push(item);
           }
-          response.send(return_list);
+          response.send({"userList" : return_list});
           connection.close();
         }
       }
