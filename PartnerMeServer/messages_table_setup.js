@@ -32,7 +32,7 @@ function queryDatabase() {
 
   // Creates table
   const request = new Request(
-    `CREATE TABLE messages (ID INT NOT NULL, user1_ID INT, user2_ID INT, date DATETIME, message VARCHAR(255), PRIMARY KEY(ID), FOREIGN KEY (user1_ID) REFERENCES users(ID), FOREIGN KEY (user2_ID) REFERENCES users(ID))`,
+    `CREATE TABLE messages (ID INT NOT NULL IDENTITY, user1_ID INT, user2_ID INT, date DATETIME, message VARCHAR(255), PRIMARY KEY(ID), FOREIGN KEY (user1_ID) REFERENCES users(ID), FOREIGN KEY (user2_ID) REFERENCES users(ID))`,
     (err, rowCount) => {
       if (err) {
         console.error(err.message);

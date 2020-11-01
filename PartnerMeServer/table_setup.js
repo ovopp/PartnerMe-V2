@@ -32,7 +32,7 @@ function queryDatabase() {
 
   // Creates table
   const request = new Request(
-    `CREATE TABLE users (name VARCHAR(255), class VARCHAR(255), language VARCHAR(255), availability VARCHAR(255), hobbies nvarchar(max))`,
+    `CREATE TABLE users (ID INT NOT NULL IDENTITY, email VARCHAR(255) UNIQUE, name VARCHAR(255), class VARCHAR(255), language VARCHAR(255), availability VARCHAR(255), hobbies nvarchar(max), PRIMARY KEY(ID))`,
     (err, rowCount) => {
       if (err) {
         console.error(err.message);
