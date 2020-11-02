@@ -32,7 +32,7 @@ app.use(express.json());
  */
 app.get('/dbproxy' , (request, response)=>{
   const connection = new Connection(config);
-  var reqString = `ALTER TABLE test DROP COLUMN ID`;
+  var reqString = `DELETE FROM test WHERE email = 'vincentyan8@gmail.com'`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
@@ -179,10 +179,13 @@ var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUE
  * gets matches based request body name and class.
  * 
  */
-app.post('/matching/getmatch', (request, response) => {
+app.post('/matching/getmatch', (req, response) => {
+  var return_list = [];
+  var return_user_list = []
+  var user_hobby_list = [];
   const connection = new Connection(config);
     console.log("connection made");
-    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${request.body.email}')`;
+    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
     // Attempt to connect and execute queries if connection goes through
     connection.on("connect", err => {
 	if (err) {
@@ -195,9 +198,13 @@ app.post('/matching/getmatch', (request, response) => {
         if (err) {
           console.error(err.message);
         } else {
-          var return_list = [];
           console.log(`${rowCount} row(s) returned`);
           for(let i = 0 ; i < rows.length ; i++){
+            if(req.body.email == rows[i][5].value)
+            {
+              user_hobby_list = rows[i][4].value.split(", ");
+            }
+            else{
             var item = {
               "Name" : rows[i][0].value ,
               "Class" : rows[i][1].value ,
@@ -205,20 +212,68 @@ app.post('/matching/getmatch', (request, response) => {
               "Availability" : rows[i][3].value,
               "Hobbies" : rows[i][4].value,
               "Email" : rows[i][5].value
+              }
+              return_user_list.push(item);
             }
-            return_list.push(item);
           }
-          response.send({"userList" : return_list});
-          connection.close();
+          // connection.close();
+          for(let i = 0; i < return_user_list.length ; i++){
+            var otherUserList = return_user_list[i].Hobbies.split(", ");
+            var userHobbyListTmp = user_hobby_list;
+            // if(otherUserListSize < userHobbyListTmpSize){
+            //   for(let j = 0; j < (userHobbyListTmpSize - otherUserListSize) ; j++){
+            //     otherUserList.push("padding");
+            //   }
+            // }
+            // else if (otherUserListSize > userHobbyListTmpSize){
+            //   for(let k = 0; k < (otherUserListSize - userHobbyListTmpSize) ; k++){
+            //     userHobbyListTmp.push("padding");
+            //   }
+            // }
+            // initialize the dictionaries
+            var dictionary = {};
+            var tmpdict = {};
+            // add keys from the lists to the dictionary
+            for(let j = 0; j < otherUserList.length ; j++){
+              if(!(otherUserList[j] in dictionary)){
+                dictionary[otherUserList[j]] = 0;
+                tmpdict[otherUserList[j]] = 0;
+              }
+            }
+            for(let j = 0; j < userHobbyListTmp.length ; j++){
+              if(!(userHobbyListTmp[j] in dictionary)){
+                dictionary[userHobbyListTmp[j]] = 0;
+                tmpdict[userHobbyListTmp[j]] = 0;
+              }
+            }
+            // populate the dictionary to both dicts from the words from the list (vectors)
+            for(let j = 0; j < otherUserList.length; j++){
+              dictionary[otherUserList[j]] += 1;
+            }
+            for(let j = 0; j < userHobbyListTmp.length; j++){
+              tmpdict[userHobbyListTmp[j]] += 1;
+            }
+            // empty the lists to be used to hold the values of the dict.
+            otherUserList = [];
+            userHobbyListTmp = [];
+            console.log(dictionary);
+            console.log(tmpdict);
+            for(const key of Object.keys(dictionary)){
+              if(key != undefined){
+                otherUserList.push(dictionary[key]);
+              }
+            }
+            for(const key of Object.keys(tmpdict)){
+                userHobbyListTmp.push(tmpdict[key]);
+            }
+            return_list.push({"similarity" : similarity(otherUserList, userHobbyListTmp), "userList": return_user_list[i]});
+          }
+          return_list.sort(compare);
+          response.send(return_list);
         }
       }
     );
-      request.on("row", columns => {
-        columns.forEach(column => {
-          console.log("%s\t%s", column.metadata.colName, column.value);
-        });
-      });
-	    connection.execSql(request);
+      connection.execSql(request);
 	}
     });
 });
@@ -266,3 +321,13 @@ app.listen(PORT, () => console.log(`Express server currently running on port ${P
 
 //   return request;
 // }
+
+function compare( a, b ) {
+  if ( a.similarity > b.similarity ){
+    return -1;
+  }
+  if ( a.similarity < b.similarity ){
+    return 1;
+  }
+  return 0;
+}
