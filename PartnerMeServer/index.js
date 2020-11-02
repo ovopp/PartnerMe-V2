@@ -269,7 +269,7 @@ app.post('/matching/getmatch', (req, response) => {
             return_list.push({"similarity" : similarity(otherUserList, userHobbyListTmp), "userList": return_user_list[i]});
           }
           return_list.sort(compare);
-          response.send(return_list);
+          response.send({"match result" :return_list});
         }
       }
     );
