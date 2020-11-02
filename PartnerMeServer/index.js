@@ -248,7 +248,11 @@ app.use(express.urlencoded({
 
 app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
 
+function test (func) {
+    return func(1);
+}
 
+module.exports = {test};
 // function queryDatabase() {
 
 //   // Read all rows from table
