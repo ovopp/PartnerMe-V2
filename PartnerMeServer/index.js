@@ -368,11 +368,12 @@ app.use(function(req,res,next) {
 app.use(function(err, req, res, next){
     return res.status(err.status || 500);
 });
-app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
+
 
 app.use(express.urlencoded({
     extended: true
 }));
+
 
 
 function test (func) {
@@ -407,3 +408,5 @@ function compare( a, b ) {
   }
   return 0;
 }
+
+app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
