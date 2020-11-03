@@ -256,7 +256,7 @@ app.post('/auth/getuser', (request, response)=>{
  * 
  */
 app.post('/matching/getmatch', (req, response) => {
-  if(request.body.email == undefined){
+  if(req.body.email == undefined){
     response.send({"message": "invalid json object"}, 400);
   }
   else{
