@@ -64,13 +64,13 @@ app.get('/', (request, response) => {
 // USER METHODS
 
 app.post('/user/updateprofile', (request, response)=>{
-  if(request.body.Name == undefined || request.body.Class == undefined || request.body.Language == undefined || request.body.Availability == undefined || request.body.Hobbies == undefined || request.body.Email == undefined){
+  if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
     response.send({"message": "invalid json object"}, 400);
   }
   else{
   const connection = new Connection(config);
-  var reqString = `UPDATE test SET name = '${request.body.Name}' , language = '${request.body.Language}', 
-  class = '${request.body.Class}', availability = '${request.body.Availability}', hobbies = '${request.body.Hobbies}' WHERE email = '${request.body.Email}'`;
+  var reqString = `UPDATE test SET name = '${request.body.name}' , language = '${request.body.language}', 
+  class = '${request.body.class}', availability = '${request.body.availability}', hobbies = '${request.body.hobbies}' WHERE email = '${request.body.email}'`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
@@ -181,12 +181,12 @@ app.post('/auth/check', (request, response)=>{
 app.post('/auth/create', (request, response)=>{
     // check is user_id is already in db, return error
     // connect to auth db and update with user_id and password
-    if(request.body.Name == undefined || request.body.Class == undefined || request.body.Language == undefined || request.body.Availability == undefined || request.body.Hobbies == undefined || request.body.Email == undefined){
+    if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
       response.send({"message": "invalid json object"}, 400);
     }
     else{
     const connection = new Connection(config);
-    var reqString = `INSERT INTO test (name, class, language, availability, hobbies, email) VALUES('${request.body.Name}', '${request.body.Class}', '${request.body.Language}','${request.body.Availability}', '${request.body.Hobbies}', '${request.body.Email}')`;
+    var reqString = `INSERT INTO test (name, class, language, availability, hobbies, email) VALUES('${request.body.name}', '${request.body.class}', '${request.body.language}','${request.body.availability}', '${request.body.hobbies}', '${request.body.email}')`;
     connection.on("connect", err => {
       if (err) {
         console.log("error");
@@ -212,14 +212,14 @@ app.post('/auth/create', (request, response)=>{
 });
 
 app.post('/auth/getuser', (request, response)=>{
-  if(request.body.Name == undefined){
+  if(request.body.name == undefined){
     response.send({"message": "invalid json object"}, 400);
   }
   else{
     const connection = new Connection(config);
     // var userName = request.body.Name;
-    console.log(request.body.Name);
-    var reqString = `SELECT * FROM test WHERE name = '${request.body.Name}'`;
+    console.log(request.body.name);
+    var reqString = `SELECT * FROM test WHERE name = '${request.body.name}'`;
     // var reqString = "INSERT INTO test (name, class, language, availability, hobbies) VALUES ('Vincent Yan', 'CPEN321', 'English', 'Morning', '{[games, sports, dogs]}')";
     connection.on("connect", err => {
       if (err) {
