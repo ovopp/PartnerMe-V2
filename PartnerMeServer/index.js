@@ -64,6 +64,10 @@ app.get('/', (request, response) => {
 // USER METHODS
 
 app.post('/user/updateprofile', (request, response)=>{
+  if(request.body.Name == undefined || request.body.Class == undefined || request.body.Language == undefined || request.body.Availability == undefined || request.body.Hobbies == undefined || request.body.Email == undefined){
+    response.send({"message": "invalid json object"}, 400);
+  }
+  else{
   const connection = new Connection(config);
   var reqString = `UPDATE test SET name = '${request.body.Name}' , language = '${request.body.Language}', 
   class = '${request.body.Class}', availability = '${request.body.Availability}', hobbies = '${request.body.Hobbies}' WHERE email = '${request.body.Email}'`;
@@ -78,7 +82,7 @@ app.post('/user/updateprofile', (request, response)=>{
         (err, rowCount) => {
           if (err) {
             console.error(err.message);
-            response.send({"success" : false});
+            response.send({"success" : false}, 400);
           } else {
             console.log("success");
             response.send({"success" : true});
@@ -89,9 +93,14 @@ app.post('/user/updateprofile', (request, response)=>{
       connection.execSql(sqlreq);
     }
   });
+}
 });
 
 app.post('/user/current-user', (request,response)=>{
+  if(request.body.Email == undefined){
+    response.send({"message": "invalid json object"}, 400);
+  }
+  else{
   const connection = new Connection(config);
   var reqString = `SELECT * FROM test WHERE email = '${request.body.Email}'`;
   connection.on("connect", err => {
@@ -105,10 +114,9 @@ app.post('/user/current-user', (request,response)=>{
         (err, rowCount, rows) => {
           if (err) {
             console.error(err.message);
-            response.send(err);
+            response.send(err, 400);
             connection.close();
           } else {
-            console.log(rows);
             var item = {
               "Name" : rows[0][0].value ,
               "Class" : rows[0][1].value ,
@@ -125,6 +133,7 @@ app.post('/user/current-user', (request,response)=>{
       connection.execSql(sqlreq);
     }
   });
+}
 });
 
 //////// AUTH SERVICE ////////
@@ -133,23 +142,12 @@ app.get('/auth/getID', (request, response) => {
 });
 
 
-/**
-    {
-    "user_id":"hello",
-    "password": "password"
-    }
-*/
-
-app.post('/auth/authorize', (request, response)=>{
-    // check user_id and password to make sure hash is correct.
-    console.log(request.body);
-    response.send("authorize");
-});
-
-
 app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
-    console.log(request.body.email);
+    if(request.body.Email == undefined){
+      response.send({"message": "invalid json object"}, 400);
+    }
+    else{
     const connection = new Connection(config);
     var reqString = `SELECT * FROM test WHERE email = '${request.body.email}'`;
     connection.on("connect", err => {
@@ -168,7 +166,7 @@ app.post('/auth/check', (request, response)=>{
                 response.send({"success" : true});
               }
               else{
-                response.send({"success" : false});
+                response.send({"success" : false}, 400);
               }
               connection.close();
             }
@@ -177,13 +175,17 @@ app.post('/auth/check', (request, response)=>{
         connection.execSql(sqlreq);
       }
     });
+  }
 });
 
 app.post('/auth/create', (request, response)=>{
     // check is user_id is already in db, return error
     // connect to auth db and update with user_id and password
+    if(request.body.Name == undefined || request.body.Class == undefined || request.body.Language == undefined || request.body.Availability == undefined || request.body.Hobbies == undefined || request.body.Email == undefined){
+      response.send({"message": "invalid json object"}, 400);
+    }
+    else{
     const connection = new Connection(config);
-    console.log(request.body);
     var reqString = `INSERT INTO test (name, class, language, availability, hobbies, email) VALUES('${request.body.Name}', '${request.body.Class}', '${request.body.Language}','${request.body.Availability}', '${request.body.Hobbies}', '${request.body.Email}')`;
     connection.on("connect", err => {
       if (err) {
@@ -196,7 +198,7 @@ app.post('/auth/create', (request, response)=>{
           (err, rowCount, rows) => {
             if (err) {
               console.error(err.message);
-              response.send({"success" : false});
+              response.send({"success" : false}, 400);
             } else {
               response.send({"success": true});
               connection.close();
@@ -206,9 +208,14 @@ app.post('/auth/create', (request, response)=>{
         connection.execSql(sqlreq);
       }
     });
+  }
 });
 
 app.post('/auth/getuser', (request, response)=>{
+  if(request.body.Name == undefined){
+    response.send({"message": "invalid json object"}, 400);
+  }
+  else{
     const connection = new Connection(config);
     // var userName = request.body.Name;
     console.log(request.body.Name);
@@ -234,8 +241,9 @@ app.post('/auth/getuser', (request, response)=>{
         connection.execSql(sqlreq);
       }
     });
+  }
 });
-var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUES (Vincent Yan, CPEN321, English, Morning, {[games,sports,television]})';
+// var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUES (Vincent Yan, CPEN321, English, Morning, {[games,sports,television]})';
 
 
 // Matching Service
@@ -248,6 +256,10 @@ var sql = 'INSERT INTO test (name, class, language, availability, hobbies) VALUE
  * 
  */
 app.post('/matching/getmatch', (req, response) => {
+  if(request.body.email == undefined){
+    response.send({"message": "invalid json object"}, 400);
+  }
+  else{
   var return_list = [];
   var return_user_list = []
   var user_hobby_list = [];
@@ -335,6 +347,7 @@ app.post('/matching/getmatch', (req, response) => {
       connection.execSql(request);
 	}
     });
+  }
 });
 
 app.post('/matching/sendmessage', (request, response)=>{
