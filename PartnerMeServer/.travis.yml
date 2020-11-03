@@ -1,0 +1,16 @@
+language: node_js
+os: windows
+node_js:
+- '12'
+branches:
+  only:
+  - main
+cache:
+  directories:
+  - node_modules
+before_install:
+- npm update
+install:
+- npm install
+script:
+- npm test
