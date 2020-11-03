@@ -32,7 +32,7 @@ app.use(express.json());
  */
 app.get('/dbproxy' , (request, response)=>{
   const connection = new Connection(config);
-  var reqString = `DELETE FROM test WHERE email = 'vincentyan8@gmail.com'`;
+  // var reqString = `DELETE FROM test WHERE email = 'vincentyan8@gmail.com'`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
