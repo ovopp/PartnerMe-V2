@@ -144,7 +144,7 @@ app.get('/auth/getID', (request, response) => {
 
 app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
-    if(request.body.Email == undefined){
+    if(request.body.email == undefined){
       response.send({"message": "invalid json object"}, 400);
     }
     else{
