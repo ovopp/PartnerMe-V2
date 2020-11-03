@@ -63,7 +63,7 @@ app.get('/', (request, response) => {
 
 // USER METHODS
 
-app.post('/user/updateprofile', (request, response)=>{
+app.post('/user/update', (request, response)=>{
   if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
     response.send({"message": "invalid json object"}, 400);
   }
