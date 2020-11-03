@@ -9,8 +9,11 @@ cache:
   directories:
   - node_modules
 before_install:
+- cd PartnerMeServer
 - npm update
 install:
+- cd PartnerMeServer
 - npm install
 script:
+- cd PartnerMeServer
 - npm test
