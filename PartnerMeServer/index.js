@@ -97,12 +97,12 @@ app.post('/user/updateprofile', (request, response)=>{
 });
 
 app.post('/user/current-user', (request,response)=>{
-  if(request.body.Email == undefined){
+  if(request.body.email == undefined){
     response.send({"message": "invalid json object"}, 400);
   }
   else{
   const connection = new Connection(config);
-  var reqString = `SELECT * FROM test WHERE email = '${request.body.Email}'`;
+  var reqString = `SELECT * FROM test WHERE email = '${request.body.email}'`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
@@ -125,7 +125,7 @@ app.post('/user/current-user', (request,response)=>{
               "Hobbies" : rows[0][4].value,
               "Email" : rows[0][5].value
               };
-              response.send(item);
+              response.send({"user": item});
             connection.close();
           }
         }
