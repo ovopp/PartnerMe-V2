@@ -7,6 +7,7 @@ var similarity = require( 'compute-cosine-similarity' );
 var logger = require('morgan');
 
 const { Connection, Request } = require("tedious");
+const { request } = require('express');
 
 // Create connection to database
 const config = {
@@ -60,10 +61,77 @@ app.get('/', (request, response) => {
     response.send('Hello');
 });
 
+// USER METHODS
+
+app.post('/user/updateprofile', (request, response)=>{
+  const connection = new Connection(config);
+  var reqString = `UPDATE test SET name = '${request.body.Name}' , language = '${request.body.Language}', 
+  class = '${request.body.Class}', availability = '${request.body.Availability}', hobbies = '${request.body.Hobbies}' WHERE email = '${request.body.Email}'`;
+  connection.on("connect", err => {
+    if (err) {
+      console.log("error");
+      console.error(err.message);
+    }
+    else {
+      const sqlreq = new Request(
+        reqString, 
+        (err, rowCount) => {
+          if (err) {
+            console.error(err.message);
+            response.send({"success" : false});
+          } else {
+            console.log("success");
+            response.send({"success" : true});
+            connection.close();
+          }
+        }
+      );
+      connection.execSql(sqlreq);
+    }
+  });
+});
+
+app.post('/user/current-user', (request,response)=>{
+  const connection = new Connection(config);
+  var reqString = `SELECT * FROM test WHERE email = '${request.body.Email}'`;
+  connection.on("connect", err => {
+    if (err) {
+      console.log("error");
+      console.error(err.message);
+    }
+    else {
+      const sqlreq = new Request(
+        reqString, 
+        (err, rowCount, rows) => {
+          if (err) {
+            console.error(err.message);
+            response.send(err);
+            connection.close();
+          } else {
+            console.log(rows);
+            var item = {
+              "Name" : rows[0][0].value ,
+              "Class" : rows[0][1].value ,
+              "Language" : rows[0][2].value,
+              "Availability" : rows[0][3].value,
+              "Hobbies" : rows[0][4].value,
+              "Email" : rows[0][5].value
+              };
+              response.send(item);
+            connection.close();
+          }
+        }
+      );
+      connection.execSql(sqlreq);
+    }
+  });
+});
+
 //////// AUTH SERVICE ////////
 app.get('/auth/getID', (request, response) => {
     response.send('Your ID');
 });
+
 
 /**
     {
@@ -220,16 +288,7 @@ app.post('/matching/getmatch', (req, response) => {
           for(let i = 0; i < return_user_list.length ; i++){
             var otherUserList = return_user_list[i].Hobbies.split(", ");
             var userHobbyListTmp = user_hobby_list;
-            // if(otherUserListSize < userHobbyListTmpSize){
-            //   for(let j = 0; j < (userHobbyListTmpSize - otherUserListSize) ; j++){
-            //     otherUserList.push("padding");
-            //   }
-            // }
-            // else if (otherUserListSize > userHobbyListTmpSize){
-            //   for(let k = 0; k < (otherUserListSize - userHobbyListTmpSize) ; k++){
-            //     userHobbyListTmp.push("padding");
-            //   }
-            // }
+            
             // initialize the dictionaries
             var dictionary = {};
             var tmpdict = {};
