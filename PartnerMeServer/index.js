@@ -29,6 +29,7 @@ const config = {
 app.use(express.json());
 
 /**
+ * hello
  * simple endpoint to run SQL scripts to change DB
  */
 app.get('/dbproxy' , (request, response)=>{
