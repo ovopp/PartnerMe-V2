@@ -2,8 +2,10 @@
 
 Solving the problem of finding the perfect study partner.
 
-# NodeJS
-## Testing:
+## NodeJS
+
+## Testing
+
 - install latest version of Node
 - Download/pull source code
 - in folder cmd, do "npm install"
@@ -11,16 +13,22 @@ Solving the problem of finding the perfect study partner.
 - A local server should be hosted on http:localhost:3000
 - Can test endpoints using android app or POSTMAN
 
-# Android Application
+## Android Application
+
 -insert things here-
 
-# Database
+## Database
+
 - insert methods, setup, testing -
 
-# SQL Database
+## SQL Database
+
 - Encrypted
+
 - Azure SQL server
-## Tables:
+
+## Tables
+
 - users
   - ID INT NOT NULL IDENTITY
   - email VARCHAR (255)
