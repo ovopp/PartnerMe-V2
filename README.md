@@ -6,12 +6,12 @@ Solving the problem of finding the perfect study partner.
 
 ## Testing
 
-- install latest version of Node
-- Download/pull source code
-- in folder cmd, do "npm install"
-- followed by "npm start"
-- A local server should be hosted on http:localhost:3000
-- Can test endpoints using android app or POSTMAN
+-   install latest version of Node
+-   Download/pull source code
+-   in folder cmd, do "npm install"
+-   followed by "npm start"
+-   A local server should be hosted on http:localhost:3000
+-   Can test endpoints using android app or POSTMAN
 
 ## Android Application
 
@@ -19,44 +19,43 @@ Solving the problem of finding the perfect study partner.
 
 ## Database
 
-- insert methods, setup, testing -
+ insert methods, setup, testing
 
 ## SQL Database
 
-- Encrypted
-
-- Azure SQL server
+-   Encrypted
+-   Azure SQL server
 
 ## Tables
 
-- users
-  - ID INT NOT NULL IDENTITY
-  - email VARCHAR (255)
-  - name VARCHAR(255)
-  - class VARCHAR(255)
-  - language VARCHAR(255)
-  - availability VARCHAR(255)
-  - hobbies NVARCHAR(max)
-  - PRIMARY KEY (ID)
-  - UNIQUE (email)
-- meetings
-  - ID INT NOT NULL IDENTITY
-  - user1_ID INT
-  - user2_ID INT
-  - transcript NVARCHAR(max)
-  - images NVARCHAR(max)
-  - PRIMARY KEY (ID)
-  - FOREIGN KEY (user1_ID) REFERENCES users(ID)
-  - FOREIGN KEY (user2_ID) REFERENCES users(ID)
-- messages
-  - ID INT NOT NULL IDENTITY
-  - user1_ID INT
-  - user2_ID INT
-  - date DATETIME
-  - message VARCHAR(255)
-  - PRIMARY KEY (ID)
-  - FOREIGN KEY (user1_ID) REFERENCES users(ID)
-  - FOREIGN KEY (user2_ID) REFERENCES users(ID)
+-   users
+-   ID INT NOT NULL IDENTITY
+-   email VARCHAR (255)
+-   name VARCHAR(255)
+-   class VARCHAR(255)
+-   language VARCHAR(255)
+-   availability VARCHAR(255)
+-   hobbies NVARCHAR(max)
+-   PRIMARY KEY (ID)
+-   UNIQUE (email)
+-   meetings
+-   ID INT NOT NULL IDENTITY
+-   user1_ID INT
+-   user2_ID INT
+-   transcript NVARCHAR(max)
+-   images NVARCHAR(max)
+-   PRIMARY KEY (ID)
+-   FOREIGN KEY (user1_ID) REFERENCES users(ID)
+-   FOREIGN KEY (user2_ID) REFERENCES users(ID)
+-   messages
+-   ID INT NOT NULL IDENTITY
+-   user1_ID INT
+-   user2_ID INT
+-   date DATETIME
+-   message VARCHAR(255)
+-   PRIMARY KEY (ID)
+-   FOREIGN KEY (user1_ID) REFERENCES users(ID)
+-   FOREIGN KEY (user2_ID) REFERENCES users(ID)
 
 Group members:
 Vincent Yan
