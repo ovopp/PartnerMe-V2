@@ -163,7 +163,7 @@ app.post('/auth/check', (request, response)=>{
             if (err) {
               console.error(err.message);
             } else {
-              if(rowCount != 0){
+              if(rowCount !== 0){
                 response.send({"success" : true});
               }
               else{
