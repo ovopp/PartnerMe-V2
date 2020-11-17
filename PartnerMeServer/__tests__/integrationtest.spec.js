@@ -2,211 +2,195 @@ const backend = require("../index");
 const supertest = require('supertest');
 const req = supertest(backend);
 
-// jest.mock("../../SQLquery") //Unsure about this line
+/**
+ * Welcome to integration testing: Api's that are exposed in the front-end are:
+ * 
+ * For Authorization and Making new User
+ * app.post('/user/update')
+ * app.post('/user/current-user')
+ * app.post('/auth/check')
+ * app.post('/auth/create')
+ * 
+ * For Matching
+ * app.post('/matching/getmatch')
+ * app.post('/matching/sendmessage')
+ * app.post('/collaboration/schedule')
+ */
 
-// block //To stop test from running prematurely (leave error in until ready)
+ 
+ /* SIGNING IN AS A NEW USER */
 
-//Hello world function
-describe("App get", () => {
-    it("Should attempt to run our 'hello world' function as test", async () => {
-		const data = await req.get('/');
-		expect(data.text == "Hello").toBeTruthy();
+describe("STARTING SIGNIN AS NEW USER: App post checks to see if the user exists in the database", () => {
+    it("It should return False since we don't have the user in the database", async () => {
+	const input = {"email": "vincentyan8@test.com"};
+		const data = await req.post('/auth/check').send(input);
+    expect(data.body.error === "No user found with that email").toBeTruthy();
+    });
+});
+
+describe("Once check it doesn't exist, we then create the new user via form", () => {
+    it("It should return False since all the fields are inaccurate", async () => {
+        const input = {"name":"",
+        "class":"",
+        "language":"",
+        "availability":"",
+        "hobbies":"",
+        "email":"vincentyan8@test.com"};
+		const data = await req.post('/auth/create').send(input);
+    expect(data.body.message === "Create new user failed due to request fields not being valid" ).toBeTruthy();
+    });
+});
+
+describe("Once check it doesn't exist, we then create the new user via form", () => {
+    it("It should return True since all the fields are accurate", async () => {
+        const input = {"name":"test",
+        "class":"test",
+        "language":"test",
+        "availability":"test",
+        "hobbies":"test",
+        "email":"vincentyan8@test.com"};
+		const data = await req.post('/auth/create').send(input);
+    expect(data.body.success === true).toBeTruthy();
+    });
+});
+
+describe("Check to make sure user is added successfully", () => {
+    it("It should return True since we the user is now in the database", async () => {
+	const input = {"email": "vincentyan8@test.com"};
+		const data = await req.post('/auth/check').send(input);
+    expect(data.body.success === true).toBeTruthy();
     });
 });
 
 
-//Users
-describe("App get dbproxy test", () => {
-    it("Should attempt to run a select query on the db", async () => {
-		const query = "SELECT name FROM users";
-        const data = await req.get('/dbproxy').send(query);
-	expect(data.body == "Example row for query: ${query}").toBeTruthy();
+/* SIGNING IN AS A OLD USER */
+describe("STARTING SIGNIN AS OLD USER: App post checks to see if the user exists in the database", () => {
+    it("It should return True since we have the user in the database", async () => {
+	const input = {"email": "vincentyan8@gmail.com"};
+		const data = await req.post('/auth/check').send(input);
+    expect(data.body.error === "No user found with that email").toBeTruthy();
     });
 });
 
-describe("App post user update #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-		const data = await req.post('/user/update').send(input);
-	expect(data.body.message === "Cannot update user because the request body is undefined").toBeTruthy();
+describe("App post user/current-user. Returns the information for the current user", () => {
+    it("Should return true", async () => {
+	const input = {"email": "vincentyan8@gmail.com"};
+	const data = await req.post('/user/current-user').send(input);
+    expect(data.body.email === "vincentyan8@gmail.com").toBeTruthy();
     });
 });
 
-describe("App post user update #2", () => {
+
+
+/* UPDATING USER INFORMATION */
+
+describe("STARTING UPDATING USER INFO: App post user/current/user. Check to make sure user user exists in our database", () => {
+    it("user/current-user checker to return the current user values and display on view", async () => {
+	const input = {"email": "vincentyan8@test.com"};
+	const data = await req.post('/user/current-user').send(input);
+    expect(data.body === {"name":"test",
+    "class":"test",
+    "language":"test",
+    "availability":"test",
+    "hobbies":"test",
+    "email":"vincentyan8@test.com"}).toBeTruthy();
+    });
+});
+
+describe("App post user/current-user. Check to make sure user user exists in our database", () => {
+    it("Should return false", async () => {
+	const input = {"email": "asdf@blahblah.com"};
+	const data = await req.post('/user/current-user').send(input);
+    expect(data.body.error === "No user found, please resign-in and register").toBeTruthy();
+    });
+});
+
+
+describe("App post user update. Updating user information", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
+	const input = {"name":"test1",
+		       "class":"test1",
+		       "language":"test1",
+		       "availability":"test1",
+		       "hobbies":"test1",
+		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
 	expect(data.body.success ==  true).toBeTruthy();
     });
 });
 
-describe("App post user current user #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await req.post('/user/curren-user').send(input);
-	expect(data.body.message == "Request query is invalid for current user").toBeTruthy();
-    });
-});
-
-describe("App post user current user #2", () => {
-    it("Should return with success", async () => {
-	const input = {"email": 'vincentyan8@gmail.com'};
-	const item = {
-		"Name" : "Vincent Yan" ,
-		"Class" : "CPEN 321" ,
-		"Language" : "English",
-		"Availability" : "Morning",
-		"Hobbies" : "Computers, Engineering, Dogs",
-		"Email" : "vincentyan8@gmail.com"
-	}
-        const data = await req.post('/user/current-user').send(input);
-	expect(data.body.user ==  item).toBeTruthy();
-    });
-});
-
-//Authentication
-describe("App post auth check #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await req.post('/auth/check').send(input);
-	expect(data.body.message == "No email provided for authentication").toBeTruthy();
-    });
-});
-
-
-describe("App post auth check #2", () => {
-    it("Should return with error no user found", async () => {
-	const input = {"name":"test",
-		       "class":"test",
+describe("App post user update. Updating user information fail", () => {
+    it("Should return with failure", async () => {
+	const input = {"class":"test",
 		       "language":"test",
 		       "availability":"test",
 		       "hobbies":"test",
-		       "email":"test"};
-        const data = await req.post('/auth/check').send(input);
-	expect(data.body.error == "No user found with that email").toBeTruthy();
+		       "email":"vincentyan8@test.com"};
+        const data = await req.post('/user/update').send(input);
+	expect(data.body.message ==  "Cannot update user because the request body is undefined").toBeTruthy();
     });
 });
 
-describe("App post auth check #3", () => {
+describe("App post /user/current-user. Check to make sure update was successful", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"vincentyan8@gmail.com"};
-        const data = await req.post('/auth/check').send(input);
-	expect(data.body.success == true).toBeTruthy();
+	const input = {"email":"vincentyan8@test.com"};
+    const data = await req.post('/user/current-user').send(input);
+	expect(data.body.user ==  {"name":"test1",
+    "class":"test1",
+    "language":"test1",
+    "availability":"test1",
+    "hobbies":"test1",
+    "email":"vincentyan8@test.com"}).toBeTruthy();
     });
 });
 
-describe("App post auth create #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await req.post('/auth/create').send(input);
-	expect(data.body.message == "Create new user failed due to request fields not being valid").toBeTruthy();
-    });
-});
 
-describe("App post auth create #2", () => {
+ /* MATCHING MODULE */
+
+ describe("STARTING MATCHING: App post /user/current-user. Gets the current user's information", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await req.post('/auth/create').send(input);
-	expect(data.body.success ==  true).toBeTruthy();
+	const input = {"email":"vincentyan8@test.com"};
+    const data = await req.post('/user/current-user').send(input);
+	expect(data.body.user ==  {"name":"test1",
+    "class":"test1",
+    "language":"test1",
+    "availability":"test1",
+    "hobbies":"test1",
+    "email":"vincentyan8@test.com"}).toBeTruthy();
     });
 });
 
 
-//Matching service
-describe("App post matching get match #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await req.post('/matching/getmatch').send(input);
-	expect(data.body.message == "User email parameter is invalid for matching").toBeTruthy();
+describe("App post /matching/getmatch. Gets a list of matches for new user based on their hobbies", () => {
+    it("Should return with success, but no matches", async () => {
+	const input = {"email":"vincentyan8@test.com"};
+    const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body.match_result == []).toBeTruthy();
     });
 });
 
-describe("App post matching get match #2", () => {
+
+describe("App post /matching/getmatch. Gets a list of matches for an old user based on their hobbies", () => {
+    it("Should return with success, and have matches", async () => {
+	const input = {"email":"vincentyan8@gmail.com"};
+    const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body.match_result.length >= 0).toBeTruthy();
+    });
+});
+
+// will have more tests after set-up messaging
+describe("App post /matching/sendmessage. Sends a message to the other matched user", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await req.post('/matching/getmatch').send(input);
-	expect(data.body == "success").toBeTruthy();
+	const input = {"email":"vincentyan8@gmail.com"};
+    const data = await req.post('/matching/sendmessage').send(input);
+	expect(data.body.text === 'external services').toBeTruthy();
     });
 });
 
-// First test we won't have a match since there isn't a test@gmail.com account
-describe("Cosine similarity", () => {
-    it("Should return with empty user", async () => {
-	const req = {'body' : {'email' : 'test@gmail.com'}};
-	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
-        const data = await backend.cosineSim(req, query);
-	expect(data == {"match result" : []}).toBeTruthy();
-    });
-});
-
-// Second test should return matches with self
-describe("Cosine similarity", () => {
-    it("Should return with success and return first user to be self", async () => {
-	const req = {'body' : {'email' : 'vincentyan8@gmail.com'}};
-	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
-
-	expect(data == {"match result" : [{'similarity' : 1, 'userlist' : {
-			"Name" : "Vincent Yan" ,
-			"Class" : "CPEN 321" ,
-			"Language" : "English",
-			"Availability" : "Morning",
-			"Hobbies" : "Computers, Engineering, Dogs",
-			"Email" : "vincentyan8@gmail.com"
-		}
-		}]}).toBeTruthy();
-    });
-});
-
-			 
-describe("App post matching send message", () => {
+describe("App post /collaboration/schedule. Sends a collaboration request to the other user", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await req.post('/matching/sendmessage').send(input);
-	expect(data.text == "external services").toBeTruthy();
+	const input = {"email":"vincentyan8@gmail.com"};
+    const data = await req.post('/collaboration/schedule').send(input);
+	expect(data.body.text === 'matching services').toBeTruthy();
     });
 });

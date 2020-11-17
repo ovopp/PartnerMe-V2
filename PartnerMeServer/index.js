@@ -119,6 +119,9 @@ app.post('/user/current-user', (request,response)=>{
             response.send(err, 400);
             connection.close();
           } else {
+            if (rowCount != 0){
+              response.send({"error" : "No user found, please resign-in and register"} , 400);
+            }
             var item = {
               "Name" : rows[0][0].value ,
               "Class" : rows[0][1].value ,
@@ -329,7 +332,7 @@ function cosineSim(connection, req, reqString){
        } else {
          console.log(`${rowCount} row(s) returned`);
          if(rowCount == 0){
-          return {"match result" : []}
+          return {"match_result" : []}
          }
          for(let i = 0 ; i < rows.length ; i++){
            if(req.body.email == rows[i][5].value)
@@ -397,7 +400,7 @@ function cosineSim(connection, req, reqString){
      }
    );
     connection.execSql(request);
-    return {"match result" :return_list};
+    return {"match_result" :return_list};
 }
 
 app.post('/matching/sendmessage', (request, response)=>{
