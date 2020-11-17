@@ -25,7 +25,7 @@ const config = {
     rowCollectionOnRequestCompletion: true
   }
 };
-const connection = new Connection(config);
+// const connection = new Connection(config);
 app.use(express.json());
 
 /**
