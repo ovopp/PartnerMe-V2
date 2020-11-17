@@ -1,5 +1,5 @@
 function queryDatabase(query) {
-  return "Example row for query: ${query}"
+  return "Would have ran ${query}"
 }
 
 export default queryDatabase
