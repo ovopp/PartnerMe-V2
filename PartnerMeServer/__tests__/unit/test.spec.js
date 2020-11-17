@@ -1,7 +1,7 @@
 const backend = require("../../index");
 jest.mock("../../SQLquery") //Unsure about this line
 
-block //To stop test from running prematurely (leave error in until ready)
+// block //To stop test from running prematurely (leave error in until ready)
 
 //Hello world function
 describe("App get", () => {
@@ -173,15 +173,35 @@ describe("App post matching get match #2", () => {
     });
 });
 
+// First test we won't have a match since there isn't a test@gmail.com account
 describe("Cosine similarity", () => {
-    it("Should return with success", async () => {
-	const req = ;
-	const query = "";
+    it("Should return with empty user", async () => {
+	const req = {'body' : {'email' : 'test@gmail.com'}};
+	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
         const data = await backend.cosineSim(req, query);
-	expect(data == "return result").toBeTruth();
+	expect(data == {"match result" : []}).toBeTruth();
     });
 });
 
+
+describe("Cosine similarity", () => {
+    it("Should return with success and return first user to be self", async () => {
+	const req = {'body' : {'email' : 'vincentyan8@gmail.com'}};
+	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
+
+	expect(data == {"match result" : [{'similarity' : 1, 'userlist' : {
+			"Name" : "Vincent Yan" ,
+			"Class" : "CPEN 321" ,
+			"Language" : "English",
+			"Availability" : "Morning",
+			"Hobbies" : "Computers, Engineering, Dogs",
+			"Email" : "vincentyan8@gmail.com"
+		}
+		}]}).toBeTruth();
+    });
+});
+
+			 
 describe("App post matching send message", () => {
     it("Should return with success", async () => {
 	const input = {"name":"test",
