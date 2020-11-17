@@ -410,4 +410,39 @@ function compare( a, b ) {
   return 0;
 }
 
+function queryDatabase(query) {
+
+  // Performs the given sql query
+  const request = new Request(
+    query,
+    (err, rowCount) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(`Success: ${rowCount} row(s) returned`);
+      }
+    }
+  );
+
+    connection.execSql(request);
+}
+
+function querySelectDatabase(query) {
+
+  // Performs the given sql query
+  const request = new Request(
+    query,
+    (err, rowCount, rows) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(`Success: ${rowCount} row(s) returned`);
+	return rows;
+      }
+    }
+  );
+
+    return connection.execSql(request);
+}
+
 app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
