@@ -1,23 +1,29 @@
-const backend = require("../../index");
-jest.mock("../../SQLquery") //Unsure about this line
 
-block //To stop test from running prematurely (leave error in until ready)
+const backend = require("../../index");
+const supertest = require('supertest');
+const req = supertest(backend);
+const func = require("../../functions");
+
+// const apicalls = require("../apicalls")
+
+// jest.mock("../../SQLquery") //Unsure about this line
+
+// block //To stop test from running prematurely (leave error in until ready)
 
 //Hello world function
 describe("App get", () => {
     it("Should attempt to run our 'hello world' function as test", async () => {
-        const data = await backend.request(app).get('/');
-	expect(data.body == "Hello").toBeTruth();
+		const data = await req.get('/');
+		expect(data.text == "Hello").toBeTruthy();
     });
 });
-
 
 //Users
 describe("App get dbproxy test", () => {
     it("Should attempt to run a select query on the db", async () => {
-	const query = "SELECT name FROM users";
-        const data = await backend.request(app).get('/dbproxy').send(query);
-	expect(data.body == "Example row for query: ${query}").toBeTruth();
+		const query = "SELECT name FROM users";
+        const data = await req.get('/dbproxy').send(query);
+	expect(data.body == "Example row for query: ${query}").toBeTruthy();
     });
 });
 
@@ -28,8 +34,8 @@ describe("App post user update #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == "invalid json object").toBeTruth();
+		const data = await req.post('/user/update').send(input);
+	expect(data.body.message === "Cannot update user because the request body is undefined").toBeTruthy();
     });
 });
 
@@ -41,8 +47,8 @@ describe("App post user update #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == "success").toBeTruth();
+        const data = await req.post('/user/update').send(input);
+	expect(data.body.success ==  true).toBeTruthy();
     });
 });
 
@@ -53,21 +59,24 @@ describe("App post user current user #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/user/curren-user').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+        const data = await req.post('/user/curren-user').send(input);
+	expect(data.body.message == "Request query is invalid for current user").toBeTruthy();
     });
 });
 
 describe("App post user current user #2", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await backend.request(app).post('/user/current-user').send(input);
-	expect(data.body == "success").toBeTruth();
+	const input = {"email": 'vincentyan8@gmail.com'};
+	const item = {
+		"Name" : "Vincent Yan" ,
+		"Class" : "CPEN 321" ,
+		"Language" : "English",
+		"Availability" : "Morning",
+		"Hobbies" : "Computers, Engineering, Dogs",
+		"Email" : "vincentyan8@gmail.com"
+	}
+        const data = await req.post('/user/current-user').send(input);
+	expect(data.body.user ==  item).toBeTruthy();
     });
 });
 
@@ -79,21 +88,35 @@ describe("App post auth check #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.message == "No email provided for authentication").toBeTruthy();
     });
 });
 
+
 describe("App post auth check #2", () => {
-    it("Should return with success", async () => {
+    it("Should return with error no user found", async () => {
 	const input = {"name":"test",
 		       "class":"test",
 		       "language":"test",
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.body == "success").toBeTruth();
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.error == "No user found with that email").toBeTruthy();
+    });
+});
+
+describe("App post auth check #3", () => {
+    it("Should return with success", async () => {
+	const input = {"name":"test",
+		       "class":"test",
+		       "language":"test",
+		       "availability":"test",
+		       "hobbies":"test",
+		       "email":"vincentyan8@gmail.com"};
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.success == true).toBeTruthy();
     });
 });
 
@@ -104,8 +127,8 @@ describe("App post auth create #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+        const data = await req.post('/auth/create').send(input);
+	expect(data.body.message == "Create new user failed due to request fields not being valid").toBeTruthy();
     });
 });
 
@@ -117,35 +140,11 @@ describe("App post auth create #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.body == "success").toBeTruth();
+        const data = await req.post('/auth/create').send(input);
+	expect(data.body.success ==  true).toBeTruthy();
     });
 });
 
-describe("App post auth get user #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/getuser').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
-    });
-});
-
-describe("App post auth get user #2", () => {
-    it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await backend.request(app).post('/auth/getuser').send(input);
-	expect(data.body == "success").toBeTruth();
-    });
-});
 
 //Matching service
 describe("App post matching get match #1", () => {
@@ -155,8 +154,8 @@ describe("App post matching get match #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/matching/getmatch').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+        const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body.message == "User email parameter is invalid for matching").toBeTruthy();
     });
 });
 
@@ -168,20 +167,40 @@ describe("App post matching get match #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/matching/getmatch').send(input);
-	expect(data.body == "success").toBeTruth();
+        const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body == "success").toBeTruthy();
     });
 });
 
+// First test we won't have a match since there isn't a test@gmail.com account
 describe("Cosine similarity", () => {
-    it("Should return with success", async () => {
-	const req = ;
-	const query = "";
-        const data = await backend.cosineSim(req, query);
-	expect(data == "return result").toBeTruth();
+    it("Should return with empty user", async () => {
+	const req = {'body' : {'email' : 'test@gmail.com'}};
+	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
+    const data = await func.cosineSim(req, query);
+	expect(data == {"match result" : []}).toBeTruthy();
     });
 });
 
+// Second test should return matches with self
+describe("Cosine similarity", () => {
+    it("Should return with success and return first user to be self", async () => {
+	const req = {'body' : {'email' : 'vincentyan8@gmail.com'}};
+	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
+	const data = await func.cosineSim(req, query);
+	expect(data == {"match result" : [{'similarity' : 1, 'userlist' : {
+			"Name" : "Vincent Yan" ,
+			"Class" : "CPEN 321" ,
+			"Language" : "English",
+			"Availability" : "Morning",
+			"Hobbies" : "Computers, Engineering, Dogs",
+			"Email" : "vincentyan8@gmail.com"
+		}
+		}]}).toBeTruthy();
+    });
+});
+
+			 
 describe("App post matching send message", () => {
     it("Should return with success", async () => {
 	const input = {"name":"test",
@@ -190,7 +209,56 @@ describe("App post matching send message", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/matching/sendmessage').send(input);
-	expect(data.body == "external services").toBeTruth();
+        const data = await req.post('/matching/sendmessage').send(input);
+	expect(data.text == "external services").toBeTruthy();
+    });
+});
+
+/* Testing functions in functions.js */
+
+describe("Unit testing functions in function.js", () => {
+    it("Should return comparison", async () => {
+	a = {'similarity' : 5};
+	b = {'similarity' : 5};
+	c = {'similarity' : 4};
+	d = {'similarity' : 6};
+	const data = func.compare(a,b);
+	const data2 = func.compare(a,c);
+	const data3 = func.compare(a,d);
+	expect(data == 0).toBeTruthy();
+	expect(data2 == -1).toBeTruthy();
+	expect(data3 == 1).toBeTruthy();
+    });
+});
+
+function querySelectDatabase(query) {
+
+    // Performs the given sql query
+    const request = new Request(
+      query,
+      (err, rowCount, rows) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log(`Success: ${rowCount} row(s) returned`);
+      return rows;
+        }
+      }
+    );
+  
+      return connection.execSql(request);
+  }
+
+describe("Unit testing functions in function.js", () => {
+    it("Should return not 0 since we have data in the database", async () => {
+	const data = func.queryDatabase(`SELECT * FROM test`);
+	expect(data !== 0).toBeTruthy();
+    });
+});
+
+describe("Unit testing functions in function.js", () => {
+    it("Should not be undefined since we have a table test in database", async () => {
+	const data = func.querySelectDatabase(`SELECT * FROM test`);
+	expect(data.rows != undefined).toBeTruthy();
     });
 });
