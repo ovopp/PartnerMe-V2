@@ -172,3 +172,25 @@ describe("App post matching get match #2", () => {
 	expect(data.body == "success").toBeTruth();
     });
 });
+
+describe("Cosine similarity", () => {
+    it("Should return with success", async () => {
+	const req = ;
+	const query = "";
+        const data = await backend.cosineSim(req, query);
+	expect(data == "return result").toBeTruth();
+    });
+});
+
+describe("App post matching send message", () => {
+    it("Should return with success", async () => {
+	const input = {"name":"test",
+		       "class":"test",
+		       "language":"test",
+		       "availability":"test",
+		       "hobbies":"test",
+		       "email":"test"};
+        const data = await backend.request(app).post('/matching/sendmessage').send(input);
+	expect(data.body == "external services").toBeTruth();
+    });
+});
