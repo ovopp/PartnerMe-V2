@@ -1,4 +1,5 @@
 const { Connection, Request } = require("tedious");
+var similarity = require( 'compute-cosine-similarity' );
 
 const config = {
     authentication: {
@@ -19,9 +20,119 @@ const config = {
   const connection = new Connection(config);
 
 function cosineSim(req, reqString){
+  var t = new Date();
+  var n = t.getTime();
     var return_list = [];
-    var return_user_list = []
+    var return_user_list = [];
     var user_hobby_list = [];
+    // var user_hobby_list = ['CPEN', 'elec', 'dogs'];
+    // var response_return = [{"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"elec, dogs",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"dogs",
+    // "email":"test"},{"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"elec, dogs",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"dogs",
+    // "email":"test"},{"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"elec, dogs",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"dogs",
+    // "email":"test"},{"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test, asdf, fdasd",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, test",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"elec, dogs",
+    // "email":"test"}, {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"dogs",
+    // "email":"test"}];
+    // var user = {"name":"test",
+    // "class":"test",
+    // "language":"test",
+    // "availability":"test",
+    // "hobbies":"CPEN, elec, dogs",
+    // "email":"test"}
     const request = new Request(
       reqString,
        (err, rowCount, rows) => {
@@ -49,7 +160,19 @@ function cosineSim(req, reqString){
                return_user_list.push(item);
              }
            }
-           // connection.close();
+           connection.close();
+          // for(let i = 0; i < response_return.length; i ++){
+          //   var item = {
+          //                "Name" : response_return[i].name ,
+          //                "Class" : response_return[i].class,
+          //                "Language" : response_return[i].language,
+          //                "Availability" : response_return[i].availability,
+          //                "Hobbies" : response_return[i].hobbies,
+          //                "Email" : response_return[i].email
+          //                }
+          //   return_user_list.push(item);
+          // }
+
            for(let i = 0; i < return_user_list.length ; i++){
              var otherUserList = return_user_list[i].Hobbies.split(", ");
              var userHobbyListTmp = user_hobby_list;
@@ -80,8 +203,6 @@ function cosineSim(req, reqString){
              // empty the lists to be used to hold the values of the dict.
              otherUserList = [];
              userHobbyListTmp = [];
-             console.log(dictionary);
-             console.log(tmpdict);
              for(const key of Object.keys(dictionary)){
                if(key != undefined){
                  otherUserList.push(dictionary[key]);

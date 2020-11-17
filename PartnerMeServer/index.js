@@ -144,7 +144,7 @@ app.post('/user/current-user', (request,response)=>{
 
 //////// AUTH SERVICE ////////
 app.get('/auth/getID', (request, response) => {
-    response.send('Your ID');
+  // response.send(func.cosineSim());
 });
 
 

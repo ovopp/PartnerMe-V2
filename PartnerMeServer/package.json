@@ -2,9 +2,9 @@
    "name": "PartnerMeServer",
    "version": "1.0.0",
    "description": "",
-   "main": "index.js",
+   "main": "start.js",
    "scripts": {
-      "start": "nodemon index.js",
+      "start": "nodemon start.js",
       "test": "jest"
    },
    "keywords": [],
