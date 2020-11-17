@@ -9,7 +9,7 @@ const func = require("../../functions");
 
 // block //To stop test from running prematurely (leave error in until ready)
 
-//Hello world function
+/* Hello world function */
 describe("App get", () => {
     it("Should attempt to run our 'hello world' function as test", async () => {
 		const data = await req.get('/');
@@ -17,7 +17,7 @@ describe("App get", () => {
     });
 });
 
-//Users
+/* App get dbproxy test */
 describe("App get dbproxy test", () => {
     it("Should attempt to run a select query on the db", async () => {
 		const query = "SELECT name FROM users";
@@ -26,6 +26,8 @@ describe("App get dbproxy test", () => {
     });
 });
 
+/* USER TESTS */ 
+/* App post user update */
 describe("App post user update #1", () => {
     it("Should return with an error", async () => {
 	const input = {"name":"",
@@ -51,6 +53,7 @@ describe("App post user update #2", () => {
     });
 });
 
+/*App post user current user */
 describe("App post user current user #1", () => {
     it("Should return with an error", async () => {
 	const input = {"name":"",
@@ -79,7 +82,9 @@ describe("App post user current user #2", () => {
     });
 });
 
-//Authentication
+/* AUTHENTICATION TESTS */
+
+/* App post auth check */
 describe("App post auth check #1", () => {
     it("Should return with an error", async () => {
 	const input = {"name":"",
@@ -119,6 +124,7 @@ describe("App post auth check #3", () => {
     });
 });
 
+/* App POST auth create */
 describe("App post auth create #1", () => {
     it("Should return with an error", async () => {
 	const input = {"name":"",
@@ -144,8 +150,9 @@ describe("App post auth create #2", () => {
     });
 });
 
+/* MATCHING SERVICE TESTS */
 
-//Matching service
+/* APP POST Matching */
 describe("App post matching get match #1", () => {
     it("Should return with an error", async () => {
 	const input = {"name":"",
@@ -170,6 +177,21 @@ describe("App post matching get match #2", () => {
 	expect(data.body == "success").toBeTruthy();
     });
 });
+
+describe("App post matching send message", () => {
+    it("Should return with success", async () => {
+	const input = {"name":"test",
+		       "class":"test",
+		       "language":"test",
+		       "availability":"test",
+		       "hobbies":"test",
+		       "email":"test"};
+        const data = await req.post('/matching/sendmessage').send(input);
+	expect(data.text == "external services").toBeTruthy();
+    });
+});
+
+/* FUNCTIONS.JS TESTS */
 
 // First test we won't have a match since there isn't a test@gmail.com account
 describe("Cosine similarity", () => {
@@ -199,22 +221,6 @@ describe("Cosine similarity", () => {
     });
 });
 
-			 
-describe("App post matching send message", () => {
-    it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await req.post('/matching/sendmessage').send(input);
-	expect(data.text == "external services").toBeTruthy();
-    });
-});
-
-/* Testing functions in functions.js */
-
 describe("Unit testing functions in function.js", () => {
     it("Should return comparison", async () => {
 	a = {'similarity' : 5};
@@ -229,24 +235,6 @@ describe("Unit testing functions in function.js", () => {
 	expect(data3 == 1).toBeTruthy();
     });
 });
-
-function querySelectDatabase(query) {
-
-    // Performs the given sql query
-    const request = new Request(
-      query,
-      (err, rowCount, rows) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-      return rows;
-        }
-      }
-    );
-  
-      return connection.execSql(request);
-  }
 
 describe("Unit testing functions in function.js", () => {
     it("Should return not 0 since we have data in the database", async () => {
