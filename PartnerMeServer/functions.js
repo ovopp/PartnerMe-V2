@@ -225,37 +225,53 @@ function cosineSim(req, reqString){
 function queryDatabase(query) {
 
     // Performs the given sql query
-    const request = new Request(
-      query,
-      (err, rowCount) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-          return rowCount;
-        }
-      }
-    );
-  
-      connection.execSql(request);
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
+	    const sqlreq = new Request(
+		query, 
+		(err, rowCount) => {
+		    if (err) {
+			console.error(err.message);
+		    } else {
+			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
+			return rowCount;
+		    }
+		}
+	    );
+	    return connection.execSql(sqlreq);
+	}
+    });
   }
 
 function querySelectDatabase(query) {
 
     // Performs the given sql query
-    const request = new Request(
-      query,
-      (err, rowCount, rows) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-      return rows;
-        }
-      }
-    );
-  
-      return connection.execSql(request);
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
+	    const sqlreq = new Request(
+		query, 
+		(err, rowCount, rows) => {
+		    if (err) {
+			console.error(err.message);
+		    } else {
+			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
+			return rows;
+		    }
+		}
+	    );
+	    return connection.execSql(sqlreq);
+	}
+    });
   }
 
 function compare( a, b ) {
