@@ -25,6 +25,7 @@ describe("STARTING SIGNIN AS NEW USER: App post checks to see if the user exists
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
     expect(data.body.error === "No user found with that email").toBeTruthy();
+    done();
     });
 });
 
@@ -38,6 +39,7 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "email":"vincentyan8@test.com"};
 		const data = await req.post('/auth/create').send(input);
     expect(data.body.message === "Create new user failed due to request fields not being valid" ).toBeTruthy();
+    done();
     });
 });
 
@@ -51,6 +53,7 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "email":"vincentyan8@test.com"};
 		const data = await req.post('/auth/create').send(input);
     expect(data.body.success === true).toBeTruthy();
+    done();
     });
 });
 
@@ -59,6 +62,7 @@ describe("Check to make sure user is added successfully", () => {
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
     expect(data.body.success === true).toBeTruthy();
+    done();
     });
 });
 
@@ -69,6 +73,7 @@ describe("STARTING SIGNIN AS OLD USER: App post checks to see if the user exists
 	const input = {"email": "vincentyan8@gmail.com"};
 		const data = await req.post('/auth/check').send(input);
     expect(data.body.error === "No user found with that email").toBeTruthy();
+    done();
     });
 });
 
@@ -77,6 +82,7 @@ describe("App post user/current-user. Returns the information for the current us
 	const input = {"email": "vincentyan8@gmail.com"};
 	const data = await req.post('/user/current-user').send(input);
     expect(data.body.email === "vincentyan8@gmail.com").toBeTruthy();
+    done();
     });
 });
 
@@ -94,6 +100,7 @@ describe("STARTING UPDATING USER INFO: App post user/current/user. Check to make
     "availability":"test",
     "hobbies":"test",
     "email":"vincentyan8@test.com"}).toBeTruthy();
+    done();
     });
 });
 
@@ -102,6 +109,7 @@ describe("App post user/current-user. Check to make sure user user exists in our
 	const input = {"email": "asdf@blahblah.com"};
 	const data = await req.post('/user/current-user').send(input);
     expect(data.body.error === "No user found, please resign-in and register").toBeTruthy();
+    done();
     });
 });
 
@@ -115,7 +123,8 @@ describe("App post user update. Updating user information", () => {
 		       "hobbies":"test1",
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
-	expect(data.body.success ==  true).toBeTruthy();
+    expect(data.body.success ==  true).toBeTruthy();
+    done();
     });
 });
 
@@ -127,7 +136,8 @@ describe("App post user update. Updating user information fail", () => {
 		       "hobbies":"test",
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
-	expect(data.body.message ==  "Cannot update user because the request body is undefined").toBeTruthy();
+    expect(data.body.message ==  "Cannot update user because the request body is undefined").toBeTruthy();
+    done();
     });
 });
 
@@ -141,6 +151,7 @@ describe("App post /user/current-user. Check to make sure update was successful"
     "availability":"test1",
     "hobbies":"test1",
     "email":"vincentyan8@test.com"}).toBeTruthy();
+    done();
     });
 });
 
@@ -157,6 +168,7 @@ describe("App post /user/current-user. Check to make sure update was successful"
     "availability":"test1",
     "hobbies":"test1",
     "email":"vincentyan8@test.com"}).toBeTruthy();
+    done();
     });
 });
 
@@ -165,7 +177,8 @@ describe("App post /matching/getmatch. Gets a list of matches for new user based
     it("Should return with success, but no matches", async () => {
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/matching/getmatch').send(input);
-	expect(data.body.match_result == []).toBeTruthy();
+    expect(data.body.match_result == []).toBeTruthy();
+    done();
     });
 });
 
@@ -174,7 +187,8 @@ describe("App post /matching/getmatch. Gets a list of matches for an old user ba
     it("Should return with success, and have matches", async () => {
 	const input = {"email":"vincentyan8@gmail.com"};
     const data = await req.post('/matching/getmatch').send(input);
-	expect(data.body.match_result.length >= 0).toBeTruthy();
+    expect(data.body.match_result.length >= 0).toBeTruthy();
+    done();
     });
 });
 
@@ -183,7 +197,8 @@ describe("App post /matching/sendmessage. Sends a message to the other matched u
     it("Should return with success", async () => {
 	const input = {"email":"vincentyan8@gmail.com"};
     const data = await req.post('/matching/sendmessage').send(input);
-	expect(data.body.text === 'external services').toBeTruthy();
+    expect(data.body.text === 'external services').toBeTruthy();
+    done();
     });
 });
 
@@ -191,6 +206,7 @@ describe("App post /collaboration/schedule. Sends a collaboration request to the
     it("Should return with success", async () => {
 	const input = {"email":"vincentyan8@gmail.com"};
     const data = await req.post('/collaboration/schedule').send(input);
-	expect(data.body.text === 'matching services').toBeTruthy();
+    expect(data.body.text === 'matching services').toBeTruthy();
+    done();
     });
 });

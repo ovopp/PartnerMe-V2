@@ -2,6 +2,7 @@
 const backend = require("../../index");
 const supertest = require('supertest');
 const req = supertest(backend);
+const func = require("../../functions");
 
 // const apicalls = require("../apicalls")
 
@@ -16,7 +17,6 @@ describe("App get", () => {
 		expect(data.text == "Hello").toBeTruthy();
     });
 });
-
 
 //Users
 describe("App get dbproxy test", () => {
@@ -177,7 +177,7 @@ describe("Cosine similarity", () => {
     it("Should return with empty user", async () => {
 	const req = {'body' : {'email' : 'test@gmail.com'}};
 	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
-        const data = await backend.cosineSim(req, query);
+    const data = await func.cosineSim(req, query);
 	expect(data == {"match result" : []}).toBeTruthy();
     });
 });
@@ -187,7 +187,7 @@ describe("Cosine similarity", () => {
     it("Should return with success and return first user to be self", async () => {
 	const req = {'body' : {'email' : 'vincentyan8@gmail.com'}};
 	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
-
+	const data = await func.cosineSim(req, query);
 	expect(data == {"match result" : [{'similarity' : 1, 'userlist' : {
 			"Name" : "Vincent Yan" ,
 			"Class" : "CPEN 321" ,
@@ -211,5 +211,54 @@ describe("App post matching send message", () => {
 		       "email":"test"};
         const data = await req.post('/matching/sendmessage').send(input);
 	expect(data.text == "external services").toBeTruthy();
+    });
+});
+
+/* Testing functions in functions.js */
+
+describe("Unit testing functions in function.js", () => {
+    it("Should return comparison", async () => {
+	a = {'similarity' : 5};
+	b = {'similarity' : 5};
+	c = {'similarity' : 4};
+	d = {'similarity' : 6};
+	const data = func.compare(a,b);
+	const data2 = func.compare(a,c);
+	const data3 = func.compare(a,d);
+	expect(data == 0).toBeTruthy();
+	expect(data2 == -1).toBeTruthy();
+	expect(data3 == 1).toBeTruthy();
+    });
+});
+
+function querySelectDatabase(query) {
+
+    // Performs the given sql query
+    const request = new Request(
+      query,
+      (err, rowCount, rows) => {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log(`Success: ${rowCount} row(s) returned`);
+      return rows;
+        }
+      }
+    );
+  
+      return connection.execSql(request);
+  }
+
+describe("Unit testing functions in function.js", () => {
+    it("Should return not 0 since we have data in the database", async () => {
+	const data = func.queryDatabase(`SELECT * FROM test`);
+	expect(data !== 0).toBeTruthy();
+    });
+});
+
+describe("Unit testing functions in function.js", () => {
+    it("Should not be undefined since we have a table test in database", async () => {
+	const data = func.querySelectDatabase(`SELECT * FROM test`);
+	expect(data.rows != undefined).toBeTruthy();
     });
 });
