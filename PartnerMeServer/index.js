@@ -25,7 +25,7 @@ const config = {
     rowCollectionOnRequestCompletion: true
   }
 };
-
+const connection = new Connection(config);
 app.use(express.json());
 
 /**
@@ -261,9 +261,6 @@ app.post('/matching/getmatch', (req, response) => {
     response.send({"message": "invalid json object"}, 400);
   }
   else{
-  var return_list = [];
-  var return_user_list = []
-  var user_hobby_list = [];
   const connection = new Connection(config);
     console.log("connection made");
     var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
