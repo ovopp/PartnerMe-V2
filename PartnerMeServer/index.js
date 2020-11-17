@@ -469,12 +469,13 @@ function queryDatabase(query) {
       if (err) {
         console.error(err.message);
       } else {
-        console.log(`Success: ${rowCount} row(s) returned`);
+          console.log(`Success: ${rowCount} row(s) returned`);
+	  return rowCount;
       }
     }
   );
 
-    connection.execSql(request);
+    return connection.execSql(request);
 }
 
 function querySelectDatabase(query) {
