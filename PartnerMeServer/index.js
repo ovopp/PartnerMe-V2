@@ -431,7 +431,7 @@ function test (func) {
     return func(1);
 }
 
-module.exports = {test};
+module.exports = {test, app, cosineSim};
 // function queryDatabase() {
 
 //   // Read all rows from table

@@ -1,4 +1,6 @@
+import { app } from '../../index';
 const backend = require("../../index");
+
 // jest.mock("../../SQLquery") //Unsure about this line
 
 // block //To stop test from running prematurely (leave error in until ready)
@@ -6,7 +8,7 @@ const backend = require("../../index");
 //Hello world function
 describe("App get", () => {
     it("Should attempt to run our 'hello world' function as test", async () => {
-        const data = await backend.app.get('/');
+        const data = await backend.request(app).get('/');
 	expect(data.body == "Hello").toBeTruth();
     });
 });
@@ -16,7 +18,7 @@ describe("App get", () => {
 describe("App get dbproxy test", () => {
     it("Should attempt to run a select query on the db", async () => {
 	const query = "SELECT name FROM users";
-        const data = await backend.app.get('/dbproxy').send(query);
+        const data = await backend.request(app).get('/dbproxy').send(query);
 	expect(data.body == "Example row for query: ${query}").toBeTruth();
     });
 });
@@ -28,7 +30,7 @@ describe("App post user update #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.app.post('/user/update').send(input);
+        const data = await backend.request(app).post('/user/update').send(input);
 	expect(data.body == {"message": "Cannot update user because the request body is undefined"}).toBeTruth();
     });
 });
@@ -41,7 +43,7 @@ describe("App post user update #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.app.post('/user/update').send(input);
+        const data = await backend.request(app).post('/user/update').send(input);
 	expect(data.body == {"success" : true}).toBeTruth();
     });
 });
