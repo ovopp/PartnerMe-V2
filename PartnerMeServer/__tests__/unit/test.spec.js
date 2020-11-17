@@ -1,5 +1,9 @@
-import { app } from '../../index';
+
 const backend = require("../../index");
+const supertest = require('supertest');
+const req = supertest(backend);
+
+// const apicalls = require("../apicalls")
 
 // jest.mock("../../SQLquery") //Unsure about this line
 
@@ -8,8 +12,8 @@ const backend = require("../../index");
 //Hello world function
 describe("App get", () => {
     it("Should attempt to run our 'hello world' function as test", async () => {
-        const data = await backend.request(app).get('/');
-	expect(data.body == "Hello").toBeTruth();
+		const data = await req.get('/');
+		expect(data.text == "Hello").toBeTruthy();
     });
 });
 
@@ -17,9 +21,9 @@ describe("App get", () => {
 //Users
 describe("App get dbproxy test", () => {
     it("Should attempt to run a select query on the db", async () => {
-	const query = "SELECT name FROM users";
-        const data = await backend.request(app).get('/dbproxy').send(query);
-	expect(data.body == "Example row for query: ${query}").toBeTruth();
+		const query = "SELECT name FROM users";
+        const data = await req.get('/dbproxy').send(query);
+	expect(data.body == "Example row for query: ${query}").toBeTruthy();
     });
 });
 
@@ -30,8 +34,8 @@ describe("App post user update #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == {"message": "Cannot update user because the request body is undefined"}).toBeTruth();
+		const data = await req.post('/user/update').send(input);
+	expect(data.body.message === "Cannot update user because the request body is undefined").toBeTruthy();
     });
 });
 
@@ -43,8 +47,8 @@ describe("App post user update #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == {"success" : true}).toBeTruth();
+        const data = await req.post('/user/update').send(input);
+	expect(data.body.success ==  true).toBeTruthy();
     });
 });
 
@@ -55,8 +59,8 @@ describe("App post user current user #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/user/curren-user').send(input);
-	expect(data.message == {"message": "Request query is invalid for current user"}).toBeTruth();
+        const data = await req.post('/user/curren-user').send(input);
+	expect(data.body.message == "Request query is invalid for current user").toBeTruthy();
     });
 });
 
@@ -71,8 +75,8 @@ describe("App post user current user #2", () => {
 		"Hobbies" : "Computers, Engineering, Dogs",
 		"Email" : "vincentyan8@gmail.com"
 	}
-        const data = await backend.request(app).post('/user/current-user').send(input);
-	expect(data.body == {"user": item}).toBeTruth();
+        const data = await req.post('/user/current-user').send(input);
+	expect(data.body.user ==  item).toBeTruthy();
     });
 });
 
@@ -84,8 +88,8 @@ describe("App post auth check #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.message == "No email provided for authentication").toBeTruth();
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.message == "No email provided for authentication").toBeTruthy();
     });
 });
 
@@ -98,8 +102,8 @@ describe("App post auth check #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.error == "No user found with that email").toBeTruth();
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.error == "No user found with that email").toBeTruthy();
     });
 });
 
@@ -111,8 +115,8 @@ describe("App post auth check #3", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"vincentyan8@gmail.com"};
-        const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.success == True).toBeTruth();
+        const data = await req.post('/auth/check').send(input);
+	expect(data.body.success == true).toBeTruthy();
     });
 });
 
@@ -123,8 +127,8 @@ describe("App post auth create #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.message == "Create new user failed due to request fields not being valid").toBeTruth();
+        const data = await req.post('/auth/create').send(input);
+	expect(data.body.message == "Create new user failed due to request fields not being valid").toBeTruthy();
     });
 });
 
@@ -136,8 +140,8 @@ describe("App post auth create #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.body == {"success": true}).toBeTruth();
+        const data = await req.post('/auth/create').send(input);
+	expect(data.body.success ==  true).toBeTruthy();
     });
 });
 
@@ -150,8 +154,8 @@ describe("App post matching get match #1", () => {
 		       "language":"",
 		       "availability":"",
 		       "hobbies":""};
-        const data = await backend.request(app).post('/matching/getmatch').send(input);
-	expect(data.message == "User email parameter is invalid for matching").toBeTruth();
+        const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body.message == "User email parameter is invalid for matching").toBeTruthy();
     });
 });
 
@@ -163,8 +167,8 @@ describe("App post matching get match #2", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/matching/getmatch').send(input);
-	expect(data.body == "success").toBeTruth();
+        const data = await req.post('/matching/getmatch').send(input);
+	expect(data.body == "success").toBeTruthy();
     });
 });
 
@@ -174,7 +178,7 @@ describe("Cosine similarity", () => {
 	const req = {'body' : {'email' : 'test@gmail.com'}};
 	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
         const data = await backend.cosineSim(req, query);
-	expect(data == {"match result" : []}).toBeTruth();
+	expect(data == {"match result" : []}).toBeTruthy();
     });
 });
 
@@ -192,7 +196,7 @@ describe("Cosine similarity", () => {
 			"Hobbies" : "Computers, Engineering, Dogs",
 			"Email" : "vincentyan8@gmail.com"
 		}
-		}]}).toBeTruth();
+		}]}).toBeTruthy();
     });
 });
 
@@ -205,7 +209,7 @@ describe("App post matching send message", () => {
 		       "availability":"test",
 		       "hobbies":"test",
 		       "email":"test"};
-        const data = await backend.request(app).post('/matching/sendmessage').send(input);
-	expect(data.body == "external services").toBeTruth();
+        const data = await req.post('/matching/sendmessage').send(input);
+	expect(data.text == "external services").toBeTruthy();
     });
 });

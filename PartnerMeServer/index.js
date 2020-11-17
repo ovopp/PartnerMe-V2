@@ -1,5 +1,5 @@
 const express = require('express');
-
+const request = require('request');
 const app = express();
 const PORT = 3000;
 var createError = require('http-errors');
@@ -7,7 +7,6 @@ var similarity = require( 'compute-cosine-similarity' );
 var logger = require('morgan');
 
 const { Connection, Request } = require("tedious");
-const { request } = require('express');
 
 // Create connection to database
 const config = {
@@ -25,7 +24,7 @@ const config = {
     rowCollectionOnRequestCompletion: true
   }
 };
-const connection = new Connection(config);
+
 app.use(express.json());
 
 /**
@@ -237,7 +236,7 @@ app.post('/matching/getmatch', (req, response) => {
 	    console.log("error");
 	    console.error(err.message);
 	} else {
-      response.send(cosineSim(req, reqString))
+      response.send(cosineSim(connection, req, reqString))
     /*
     const request = new Request(
      reqString,
@@ -318,7 +317,7 @@ app.post('/matching/getmatch', (req, response) => {
   }
 });
 
-function cosineSim(req, reqString){
+function cosineSim(connection, req, reqString){
   var return_list = [];
   var return_user_list = []
   var user_hobby_list = [];
@@ -431,7 +430,6 @@ function test (func) {
     return func(1);
 }
 
-module.exports = {test, app, cosineSim};
 // function queryDatabase() {
 
 //   // Read all rows from table
@@ -495,4 +493,4 @@ function querySelectDatabase(query) {
     return connection.execSql(request);
 }
 
-app.listen(PORT, () => console.log(`Express server currently running on port ${PORT}`));
+module.exports = app;

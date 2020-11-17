@@ -1,5 +1,3 @@
-const { test } = require("../../index");
-const backend = require("../../index");
 const testFunc = jest.fn(x => x === 1);
 jest.mock('express');
 
@@ -14,4 +12,10 @@ describe("test()", () => {
     });
     
 });
+
+describe('Sample Test', () => {
+	it('should test that true === true', () => {
+	  expect(true).toBe(true)
+	})
+  })
 
