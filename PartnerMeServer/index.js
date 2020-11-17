@@ -143,10 +143,6 @@ app.post('/user/current-user', (request,response)=>{
 });
 
 //////// AUTH SERVICE ////////
-app.get('/auth/getID', (request, response) => {
-  // response.send(func.cosineSim());
-});
-
 
 app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
