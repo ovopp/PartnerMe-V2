@@ -83,7 +83,7 @@ app.post('/user/update', (request, response)=>{
         (err, rowCount) => {
           if (err) {
             console.error(err.message);
-            response.send({"error ${err.message}" : false}, 400);
+            response.send({"success" : false}, 400);
           } else {
             console.log("success");
             response.send({"success" : true});
@@ -348,10 +348,9 @@ app.post('/matching/getmatch', (req, response) => {
       }
     );
       connection.execSql(request);
+      */
   }
-
     });
-    */
   }
 });
 
