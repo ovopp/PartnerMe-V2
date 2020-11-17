@@ -25,7 +25,7 @@ const config = {
     rowCollectionOnRequestCompletion: true
   }
 };
-// const connection = new Connection(config);
+const connection = new Connection(config);
 app.use(express.json());
 
 /**
@@ -59,7 +59,7 @@ app.get('/dbproxy' , (request, response)=>{
 
 
 app.get('/', (request, response) => {
-    response.send('Hello from server');
+    response.send('Hello');
 });
 
 // USER METHODS
@@ -201,7 +201,7 @@ app.post('/auth/create', (request, response)=>{
           (err, rowCount, rows) => {
             if (err) {
               console.error(err.message);
-              response.send({"success" : "User was not created due to error with connection to database"}, 400);
+              response.send({"error" : "User was not created due to error with connection to database"}, 400);
             } else {
               response.send({"success": true});
               connection.close();
@@ -469,13 +469,12 @@ function queryDatabase(query) {
       if (err) {
         console.error(err.message);
       } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-	  return rowCount;
+        console.log(`Success: ${rowCount} row(s) returned`);
       }
     }
   );
 
-    return connection.execSql(request);
+    connection.execSql(request);
 }
 
 function querySelectDatabase(query) {

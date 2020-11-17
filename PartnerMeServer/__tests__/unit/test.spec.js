@@ -1,5 +1,5 @@
 const backend = require("../../index");
-jest.mock("../../SQLquery") //Unsure about this line
+// jest.mock("../../SQLquery") //Unsure about this line
 
 // block //To stop test from running prematurely (leave error in until ready)
 
@@ -29,7 +29,7 @@ describe("App post user update #1", () => {
 		       "availability":"",
 		       "hobbies":""};
         const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == "invalid json object").toBeTruth();
+	expect(data.body == {"message": "Cannot update user because the request body is undefined"}).toBeTruth();
     });
 });
 
@@ -42,7 +42,7 @@ describe("App post user update #2", () => {
 		       "hobbies":"test",
 		       "email":"test"};
         const data = await backend.request(app).post('/user/update').send(input);
-	expect(data.body == "success").toBeTruth();
+	expect(data.body == {"success" : true}).toBeTruth();
     });
 });
 
@@ -54,20 +54,23 @@ describe("App post user current user #1", () => {
 		       "availability":"",
 		       "hobbies":""};
         const data = await backend.request(app).post('/user/curren-user').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+	expect(data.message == {"message": "Request query is invalid for current user"}).toBeTruth();
     });
 });
 
 describe("App post user current user #2", () => {
     it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
+	const input = {"email": 'vincentyan8@gmail.com'};
+	const item = {
+		"Name" : "Vincent Yan" ,
+		"Class" : "CPEN 321" ,
+		"Language" : "English",
+		"Availability" : "Morning",
+		"Hobbies" : "Computers, Engineering, Dogs",
+		"Email" : "vincentyan8@gmail.com"
+	}
         const data = await backend.request(app).post('/user/current-user').send(input);
-	expect(data.body == "success").toBeTruth();
+	expect(data.body == {"user": item}).toBeTruth();
     });
 });
 
@@ -80,12 +83,13 @@ describe("App post auth check #1", () => {
 		       "availability":"",
 		       "hobbies":""};
         const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+	expect(data.message == "No email provided for authentication").toBeTruth();
     });
 });
 
+
 describe("App post auth check #2", () => {
-    it("Should return with success", async () => {
+    it("Should return with error no user found", async () => {
 	const input = {"name":"test",
 		       "class":"test",
 		       "language":"test",
@@ -93,7 +97,20 @@ describe("App post auth check #2", () => {
 		       "hobbies":"test",
 		       "email":"test"};
         const data = await backend.request(app).post('/auth/check').send(input);
-	expect(data.body == "success").toBeTruth();
+	expect(data.error == "No user found with that email").toBeTruth();
+    });
+});
+
+describe("App post auth check #3", () => {
+    it("Should return with success", async () => {
+	const input = {"name":"test",
+		       "class":"test",
+		       "language":"test",
+		       "availability":"test",
+		       "hobbies":"test",
+		       "email":"vincentyan8@gmail.com"};
+        const data = await backend.request(app).post('/auth/check').send(input);
+	expect(data.success == True).toBeTruth();
     });
 });
 
@@ -105,7 +122,7 @@ describe("App post auth create #1", () => {
 		       "availability":"",
 		       "hobbies":""};
         const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+	expect(data.message == "Create new user failed due to request fields not being valid").toBeTruth();
     });
 });
 
@@ -118,34 +135,10 @@ describe("App post auth create #2", () => {
 		       "hobbies":"test",
 		       "email":"test"};
         const data = await backend.request(app).post('/auth/create').send(input);
-	expect(data.body == "success").toBeTruth();
+	expect(data.body == {"success": true}).toBeTruth();
     });
 });
 
-describe("App post auth get user #1", () => {
-    it("Should return with an error", async () => {
-	const input = {"name":"",
-		       "class":"",
-		       "language":"",
-		       "availability":"",
-		       "hobbies":""};
-        const data = await backend.request(app).post('/auth/getuser').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
-    });
-});
-
-describe("App post auth get user #2", () => {
-    it("Should return with success", async () => {
-	const input = {"name":"test",
-		       "class":"test",
-		       "language":"test",
-		       "availability":"test",
-		       "hobbies":"test",
-		       "email":"test"};
-        const data = await backend.request(app).post('/auth/getuser').send(input);
-	expect(data.body == "success").toBeTruth();
-    });
-});
 
 //Matching service
 describe("App post matching get match #1", () => {
@@ -156,7 +149,7 @@ describe("App post matching get match #1", () => {
 		       "availability":"",
 		       "hobbies":""};
         const data = await backend.request(app).post('/matching/getmatch').send(input);
-	expect(data.message == "invalid json object").toBeTruth();
+	expect(data.message == "User email parameter is invalid for matching").toBeTruth();
     });
 });
 
