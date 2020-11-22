@@ -3,11 +3,21 @@ const request = require('request');
 const func = require('./functions');
 const app = express();
 const PORT = 3000;
-var createError = require('http-errors');
-var similarity = require( 'compute-cosine-similarity' );
-var logger = require('morgan');
+const {MongoClient} = require('mongodb');
+const uri = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+const client = new MongoClient(uri);
+client.connect();
+
+// databasesList = await client.db().admin().listDatabases();
+
+
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
 
 const { Connection, Request } = require("tedious");
+const { InsufficientStorage } = require('http-errors');
 
 // Create connection to database
 const config = {
@@ -241,8 +251,153 @@ app.post('/matching/getmatch', (req, response) => {
   }
 });
 
-app.post('/matching/sendmessage', (request, response)=>{
-    response.send("external services");
+/**
+ * Adds a selected user to the current user's
+ * list of matched users. 
+ */
+app.post('/matching/select', (req, res) => {
+  if(req.body.email == undefined || req.body.otheremail == undefined){
+    this.response.send({"message": "User parameter does not exist"}, 400);
+  }
+  else {
+    var listOfMatches;
+    var otherUser;
+    var reqString =  `SELECT * FROM test WHERE email = '${req.body.email}'`;
+    var reqString2 = `SELECT * FROM match WHERE email = '${req.body.otheremail}'`;
+    connection.on("connect", err => {
+      if (err) {
+        console.log("error");
+        console.error(err.message);
+      } 
+      else {
+        const sqlreq = new Request(reqString, (err, rowCount, rows) => {
+          if (err) {
+            console.log("error");
+            console.error(err.message);
+          }
+          else {
+            listOfMatches = rows[0][0];
+          }
+        });
+        const sqlreq2 = new Request(reqString2, (err, rowCount, rows) => {
+          if (err) {
+            console.log("error");
+            console.error(err.message);
+          }
+          else {
+            otherUser = rows[0];
+          }
+        });
+        connection.execSql(sqlreq);
+        connection.execSql(sqlreq2);
+        
+        var reqString3 = `UPDATE match SET list = '${listOfMatches}'`;
+        const sqlreq3 = new Request(reqString3, (err, rowCount, rows) => {
+          if (err) {
+            console.log("error");
+            console.error(err.message);
+          }
+          else {
+            listOfMatches = rows[0];
+          }
+        });
+
+        // var otherUserList = return_user_list[i].Hobbies.split(", "); to split the users
+        connection.execSql(sqlreq3);
+        res.send({"list-of-matches": listOfMatches});
+      }
+    });
+  }
+});
+
+/**
+ * 
+ */
+
+app.post('/matching/get-match-list', (req, response) => {
+  if(req.body.email == undefined){
+    this.response.send({"message": "Error, request parameter for match list does not exist"}, 400);
+  }
+  else{
+    var reqString = `SELECT * FROM match WHERE email = '${req.body.email}'`;
+    const sqlreq = new Request(reqString, (err, rowCount, rows)=>{
+      if(err){
+        console.log("error");
+        console.error(err.message);
+      }
+      else {
+        rows[0]
+      }
+    });
+  }
+});
+
+
+/**
+ * A method to obtain a chat from the database. This is 
+ */
+app.post('/messages/getchat', (req,response)=>{
+  if(req.body.otherUser == undefined || req.body.currentUser == undefined){
+    response.send("Cannot obtain chatlog from other user due to undefined request parameters" , 400);
+  }
+  var names = [req.body.otherUser, req.body.currentUser];
+  names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
+  var messagedb = client.db("partnerme").collection('chat');
+
+  setTimeout(function() {
+    // Fetch the document that we modified
+    messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item) {
+      item.chatlog.forEach(element => {
+        console.log(element.name);
+        console.log(element.message);
+      });
+      response.send(item.chatlog);
+    });
+  }, 100);
+});
+
+/**
+ * Main method to handle sending messages. If a user has not chatted with the other user, then
+ * a new chatlog would be created betwene the two users.
+ */
+app.post('/messages/sendmessage', (req, response)=>{
+  if(req.body.otherUser == undefined || req.body.currentUser == undefined || req.body.message == undefined){
+    response.send("Message to the other user did not complete due to undefined request parameters" , 400);
+  }
+  var names = [req.body.otherUser, req.body.currentUser];
+  names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
+  var messagedb = client.db("partnerme").collection('chat');
+  setTimeout(function() {
+    // Fetch the document that we modified
+    messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item){
+      if(item == undefined){
+        messagedb.insertOne({chat_id : 1,
+          user1 : names[0],
+          user2 : names[1],
+          chatlog : [{name:  req.body.currentUser, message: req.body.message}]},
+           function(err, item) {
+          if (err) throw err;
+          console.log("1 document inserted");
+          response.send("1 document inserted", 200);
+        });
+      }
+      else{
+        var chatLog = item.chatlog;
+        console.log(chatLog);
+        var message = {
+          'name' : req.body.currentUser,
+          'message' : req.body.message
+        }
+        chatLog.push(message);
+        var update = { $set: {'chatlog': chatLog}};
+        messagedb.findOneAndUpdate({'user1' : names[0], 'user2' : names[1]}, update, function(err,result){
+          if (err) throw err;
+          console.log("chatlog updated");
+          response.send(chatLog, 200);
+        })
+      }
+    })
+  }, 1000);
 });
 
 // Collaboration Service
