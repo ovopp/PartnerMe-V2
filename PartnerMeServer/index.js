@@ -222,13 +222,12 @@ app.post('/auth/create', (request, response)=>{
   }
 });
 
-// Matching Service
+/// Matching Service /// 
 
 /**
- * TODO: change the request.body.Name to a unique identifier for the user class
- * TODO: add cosine sim to sort and add limit thresholds
  * 
- * gets matches based request body name and class.
+ * Gets matches based request body name and class.
+ * This also calls consine similarity function for all users in the table and find similarities between them
  * 
  */
 app.post('/matching/getmatch', (req, response) => {
@@ -250,92 +249,11 @@ app.post('/matching/getmatch', (req, response) => {
   }
 });
 
-/**
- * Adds a selected user to the current user's
- * list of matched users. 
- */
-app.post('/matching/select', (req, res) => {
-  if(req.body.email == undefined || req.body.otheremail == undefined){
-    this.response.send({"message": "User parameter does not exist"}, 400);
-  }
-  else {
-    var listOfMatches;
-    var otherUser;
-    var reqString =  `SELECT * FROM test WHERE email = '${req.body.email}'`;
-    var reqString2 = `SELECT * FROM match WHERE email = '${req.body.otheremail}'`;
-    connection.on("connect", err => {
-      if (err) {
-        console.log("error");
-        console.error(err.message);
-      } 
-      else {
-        const sqlreq = new Request(reqString, (err, rowCount, rows) => {
-          if (err) {
-            console.log("error");
-            console.error(err.message);
-          }
-          else {
-            listOfMatches = rows[0][0];
-          }
-        });
-        const sqlreq2 = new Request(reqString2, (err, rowCount, rows) => {
-          if (err) {
-            console.log("error");
-            console.error(err.message);
-          }
-          else {
-            otherUser = rows[0];
-          }
-        });
-        connection.execSql(sqlreq);
-        connection.execSql(sqlreq2);
-        
-        var reqString3 = `UPDATE match SET list = '${listOfMatches}'`;
-        const sqlreq3 = new Request(reqString3, (err, rowCount, rows) => {
-          if (err) {
-            console.log("error");
-            console.error(err.message);
-          }
-          else {
-            listOfMatches = rows[0];
-          }
-        });
-
-        // var otherUserList = return_user_list[i].Hobbies.split(", "); to split the users
-        connection.execSql(sqlreq3);
-        res.send({"list-of-matches": listOfMatches});
-      }
-    });
-  }
-});
-
-/**
- * Returns to the front-end the match list for the current user
- */
-
-app.post('/matching/matchlist', (req, response) => {
-  if(req.body.currentUser == undefined){
-    this.response.send({"message": "Error, request parameter for match list does not exist"}, 400);
-  }
-  else{
-    var reqString = `SELECT * FROM match WHERE email = '${req.body.email}'`;
-    const sqlreq = new Request(reqString, (err, rowCount, rows)=>{
-      if(err){
-        console.log("error");
-        console.error(err.message);
-      }
-      else {
-        rows[0]
-      }
-    });
-  }
-});
-
 
 /**
  * Match swipe right
  */
-app.post('/messages/swiperight', (req,response)=>{
+app.post('/matching/swiperight', (req,response)=>{
   if(req.body.currentUser == undefined || req.body.otherUser == undefined){
     response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
   }
@@ -510,6 +428,8 @@ app.post('/matching/swipeleft', (req,response)=>{
     })
   }
 });
+
+/// MESSAGES METHODS ///
 
 /**
  * A method to obtain a chat from the database.
