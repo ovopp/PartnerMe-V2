@@ -311,11 +311,11 @@ app.post('/matching/select', (req, res) => {
 });
 
 /**
- * 
+ * Returns to the front-end the match list for the current user
  */
 
-app.post('/matching/get-match-list', (req, response) => {
-  if(req.body.email == undefined){
+app.post('/matching/matchlist', (req, response) => {
+  if(req.body.currentUser == undefined){
     this.response.send({"message": "Error, request parameter for match list does not exist"}, 400);
   }
   else{
@@ -334,26 +334,207 @@ app.post('/matching/get-match-list', (req, response) => {
 
 
 /**
- * A method to obtain a chat from the database. This is 
+ * Match swipe right
+ */
+app.post('/messages/swiperight', (req,response)=>{
+  if(req.body.currentUser == undefined || req.body.otherUser == undefined){
+    response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
+  }
+  var matchlistdb = client.db("partnerme").collection('matchlist');
+  var nomatchlistdb = client.db("partnerme").collection('nomatchlist');
+  var bool = false;
+  setTimeout(function() {
+    // Fetch the document that we modified
+    matchlistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
+      if(err) throw err;
+      var match_list;
+      if(item == undefined){
+        match_list = [{'name' : req.body.otherUser}];
+        matchlistdb.insertOne({'user' : req.body.currentUser, 'matchlist' : match_list}, function(err,result){
+          if(err) throw err;
+          console.log("Inserted into Database");
+        })
+      }
+      else{
+        match_list = item.matchlist;
+        /* Check to see if the item already exists */
+        item.matchlist.forEach( element => {
+          if(!bool){
+          if(req.body.otherUser == element.name){
+              response.send({'success' : 'The user is already in the matchlist'},200);
+              bool = true;
+            }
+          }
+        });
+        if(!bool){
+        /* Updates the current user's matchlist */
+          match_list.push({'name' : req.body.otherUser});
+          var update = { $set: {'matchlist' : match_list}};
+          matchlistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err, result){
+            if (err) throw err;
+            console.log("chatlog updated");
+          })
+        }
+      }
+      /* Updates the current user's nomatchlist (removes them from the pool) */
+      if(!bool){
+        nomatchlistdb.findOne({'user': req.body.currentUser}, function(err, item2){
+          if(err) throw err;
+          if(item2 == undefined){
+            nomatchlistdb.insertOne(
+              {'user' : req.body.currentUser,
+              nomatchlist : [{name:  req.body.otherUser}]
+              },function(err, item) {
+                if (err) throw err;
+                  console.log("updated current user's nomatch list");
+            })
+          }
+          else{
+            var match_list2 = item2.nomatchlist;
+            match_list2.push({'name' : req.body.otherUser});
+            update = { $set: {'nomatchlist' : match_list2}};
+            nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err,result2){
+              if (err) throw errl
+              console.log("updated current user's nomatch list");
+            })
+          }
+        })
+      }
+      if(!bool){
+      /* looks into the other user's db to see if the currentUser is matched there */
+      matchlistdb.findOne({'user' : req.body.otherUser}, function(err, item){
+        if(err) throw err;
+        if(item == undefined){
+          response.send({'success' : "User has not looked through matches, will notify you if matched"} , 200);
+        }
+        else{
+          item.matchlist.forEach(element =>{
+            /**
+           * When the user matches with the other user, we gotta update both messagelist
+           */
+            if(element.name == req.body.currentUser){
+              var messagelistdb = client.db("partnerme").collection('messagelist');
+              /* Update the current user's message list */
+              messagelistdb.findOne({'user': req.body.currentUser}, function(err, result){
+                if(err) throw err;
+                if(result == undefined){
+                  messagelistdb.insertOne(
+                    {'user': req.body.currentUser, 'messagelist' : [{'name': req.body.otherUser}]},
+                    function(err){
+                      if(err) throw(err)
+                      console.log("updated messagelist");
+                    }
+                  )
+                }
+                else{
+                  var messagelist = result.messagelist;
+                  messagelist.push({'name' : req.body.otherUser});
+                  update = {
+                    $set : {'messagelist' : messagelist}
+                  }
+                  messagelistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err, updatereturn){
+                    if(err) throw err;
+                  })
+                }
+              })
+              /* Update the other user's message list */
+              messagelistdb.findOne({'user': req.body.otherUser}, function(err, result){
+                if(err) throw err;
+                if(result == undefined){
+                  messagelistdb.insertOne(
+                    {'user': req.body.otherUser, 'messagelist' : [{'name': req.body.currentUser}]},
+                    function(err){
+                      if(err) throw(err)
+                      console.log("updated other user messagelist");
+                    }
+                  );
+                }
+                else{
+                  var messagelist = result.messagelist;
+                  messagelist.push({'name' : req.body.currentUser});
+                  update = {
+                    $set : {'messagelist' : messagelist}
+                  }
+                  messagelistdb.findOneAndUpdate({'user' : req.body.otherUser}, update, function(err, updatereturn){
+                    if(err) throw err;
+                    console.log("updated current user's message list");
+                  });
+                }
+              })
+              response.send({'success' : "User was a match! Both updated"} , 200);
+              bool = true;
+            }
+          });
+          if(!bool){
+          response.send({'success' : "User has not matched with you, but when they do you will be notified"} , 200);
+          }
+        }
+      })
+    }
+    });
+  }, 1000);
+});
+
+/**
+ * Match swipe left
+ * Updates the nomatchlist database for the current user to contain t
+ */
+app.post('/matching/swipeleft', (req,response)=>{
+  if(req.body.currentUser == undefined || req.body.otherUser == undefined){
+    response.send("Cannot update method due to request object not valid");
+  }
+  else{
+    var nomatchlistdb = client.db("partnerme").collection("nomatchlist");
+    nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err,item){
+      if(err) throw err;
+      if(item == undefined){
+        nomatchlistdb.insertOne({'user' : req.body.currentUser, 'nomatchlist' : [{'name' : req.body.otherUser}]}, function(err){
+          if(err) throw err;
+          console.log("Inserted new nomatchlist");
+          response.send({'success' : "Successfully created and updated the nomatchlist for current user"} , 200);
+        });
+      }
+      else{
+        var nomatchlist = item.nomatchlist;
+        nomatchlist.push({'name' : req.body.otherUser});
+        var update = {
+          $set : {
+            'nomatchlist' : nomatchlist
+          }
+        }
+        nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser} , update, function(err){
+          if(err) throw err;
+          console.log("Successfully updated the nomatchlist for current user");
+          response.send({'success' : "Successfully updated the nomatchlist for current user"} , 200);
+        });
+      }
+    })
+  }
+});
+
+/**
+ * A method to obtain a chat from the database.
  */
 app.post('/messages/getchat', (req,response)=>{
   if(req.body.otherUser == undefined || req.body.currentUser == undefined){
     response.send("Cannot obtain chatlog from other user due to undefined request parameters" , 400);
   }
-  var names = [req.body.otherUser, req.body.currentUser];
-  names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-  var messagedb = client.db("partnerme").collection('chat');
+  else{
+    var names = [req.body.otherUser, req.body.currentUser];
+    names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
+    var messagedb = client.db("partnerme").collection('chat');
 
-  setTimeout(function() {
-    // Fetch the document that we modified
-    messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item) {
-      item.chatlog.forEach(element => {
-        console.log(element.name);
-        console.log(element.message);
+    setTimeout(function() {
+      // Fetch the document that we modified
+      messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item) {
+        item.chatlog.forEach(element => {
+          console.log(element.name);
+          console.log(element.message);
+        });
+        response.send(item.chatlog);
       });
-      response.send(item.chatlog);
-    });
-  }, 100);
+    }, 100);
+  }
 });
 
 /**
@@ -399,6 +580,38 @@ app.post('/messages/sendmessage', (req, response)=>{
     })
   }, 1000);
 });
+
+app.post('/messages/messagelist', (req,response)=>{
+  if(req.body.currentUser == undefined){
+    response.send("Cannot obtain messagelist due to undefined request parameters" , 400);
+  }
+  var messagelistdb = client.db("partnerme").collection('messagelist');
+  setTimeout(function() {
+    // Fetch the document that we modified
+    messagelistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
+      response.send(item.messagelist);
+    });
+  }, 100);
+});
+
+
+app.post('/messages/nomatchlist', (req,response)=>{
+  if(req.body.currentUser == undefined){
+    response.send("Cannot obtain nomatchlist due to undefined request parameters" , 400);
+  }
+  var nomatchlistdb = client.db("partnerme").collection('nomatchlist');
+  setTimeout(function() {
+    // Fetch the document that we modified
+    nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
+      item.nomatchlist.forEach(element => {
+        console.log(element.name);
+      });
+      response.send(item.nomatchlist);
+    });
+  }, 100);
+});
+
+
 
 // Collaboration Service
 app.post('/collaboration/schedule', (request, response)=>{
