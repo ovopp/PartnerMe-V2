@@ -2,7 +2,6 @@ const express = require('express');
 const request = require('request');
 const func = require('./functions');
 const app = express();
-const PORT = 3000;
 const {MongoClient} = require('mongodb');
 const uri = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
 const client = new MongoClient(uri);
@@ -551,6 +550,7 @@ app.post('/messages/sendmessage', (req, response)=>{
   setTimeout(function() {
     // Fetch the document that we modified
     messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item){
+      if(err) throw err;
       if(item == undefined){
         messagedb.insertOne({chat_id : 1,
           user1 : names[0],
@@ -571,14 +571,14 @@ app.post('/messages/sendmessage', (req, response)=>{
         }
         chatLog.push(message);
         var update = { $set: {'chatlog': chatLog}};
-        messagedb.findOneAndUpdate({'user1' : names[0], 'user2' : names[1]}, update, function(err,result){
+        messagedb.findOneAndUpdate({'user1' : names[0], 'user2' : names[1]}, update, function(err){
           if (err) throw err;
           console.log("chatlog updated");
           response.send(chatLog, 200);
         })
       }
     })
-  }, 1000);
+  }, 500);
 });
 
 app.post('/messages/messagelist', (req,response)=>{
@@ -589,7 +589,13 @@ app.post('/messages/messagelist', (req,response)=>{
   setTimeout(function() {
     // Fetch the document that we modified
     messagelistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
-      response.send(item.messagelist);
+      if(err) throw err;
+      if(item == undefined){
+        response.send([], 200);
+      }
+      else{
+        response.send(item.messagelist, 200);
+      }
     });
   }, 100);
 });
@@ -603,10 +609,14 @@ app.post('/messages/nomatchlist', (req,response)=>{
   setTimeout(function() {
     // Fetch the document that we modified
     nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
-      item.nomatchlist.forEach(element => {
-        console.log(element.name);
-      });
-      response.send(item.nomatchlist);
+      if(err) throw err;
+      if(item == undefined){
+        /* send an empty array when there's no nomatchlist */
+        response.send([],200);
+      }
+      else{
+        response.send(item.nomatchlist);
+      }
     });
   }, 100);
 });
