@@ -180,7 +180,7 @@ app.post('/auth/check', (request, response)=>{
                 response.send({"success" : true});
               }
               else{
-                response.send({"error" : "No user found with that email"}, 400);
+                response.send({"success" : false});
               }
               connection.close();
             }
