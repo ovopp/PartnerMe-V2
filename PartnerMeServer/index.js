@@ -42,8 +42,8 @@ const connection = new Connection(config);
  * simple endpoint to run SQL scripts to change DB
  */
 app.get('/dbproxy' , (request, response)=>{
-  // const connection = new Connection(config);
-  // var reqString = `DELETE FROM test WHERE email = 'vincentyan8@gmail.com'`;
+  const connection = new Connection(config);
+  var reqString = `SELECT * FROM users`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
@@ -52,11 +52,14 @@ app.get('/dbproxy' , (request, response)=>{
     else {
       const sqlreq = new Request(
         reqString, 
-        (err, rowCount) => {
+        (err, rowCount, rows) => {
           if (err) {
             console.error(err.message);
           } else {
             console.log("success");
+            console.log(rowCount);
+            console.log(rows);
+            response.send(rows);
             connection.close();
           }
         }
@@ -79,7 +82,7 @@ app.post('/user/update', (request, response)=>{
   }
   else{
   const connection = new Connection(config);
-  var reqString = `UPDATE test SET name = '${request.body.name}' , language = '${request.body.language}', 
+  var reqString = `UPDATE users SET name = '${request.body.name}' , language = '${request.body.language}', 
   class = '${request.body.class}', availability = '${request.body.availability}', hobbies = '${request.body.hobbies}' WHERE email = '${request.body.email}'`;
   connection.on("connect", err => {
     if (err) {
@@ -114,7 +117,7 @@ app.post('/user/current-user', (request,response)=>{
   }
   else{
   const connection = new Connection(config);
-  var reqString = `SELECT * FROM test WHERE email = '${request.body.email}'`;
+  var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
   connection.on("connect", err => {
     if (err) {
       console.log("error");
@@ -160,7 +163,7 @@ app.post('/auth/check', (request, response)=>{
     }
     else{
     const connection = new Connection(config);
-    var reqString = `SELECT * FROM test WHERE email = '${request.body.email}'`;
+    var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
     connection.on("connect", err => {
       if (err) {
         console.log("error");
@@ -197,7 +200,7 @@ app.post('/auth/create', (request, response)=>{
     }
     else{
     const connection = new Connection(config);
-    var reqString = `INSERT INTO test (name, class, language, availability, hobbies, email) VALUES('${request.body.name}', '${request.body.class}', '${request.body.language}','${request.body.availability}', '${request.body.hobbies}', '${request.body.email}')`;
+    var reqString = `INSERT INTO users (name, class, language, availability, hobbies, email) VALUES('${request.body.name}', '${request.body.class}', '${request.body.language}','${request.body.availability}', '${request.body.hobbies}', '${request.body.email}')`;
     connection.on("connect", err => {
       if (err) {
         console.log("error");
@@ -235,7 +238,7 @@ app.post('/matching/getmatch', (req, response) => {
     response.send({"message": "User email parameter is invalid for matching"}, 400);
   }
   else{
-    var reqString =  `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
+    var reqString =  `SELECT * FROM users WHERE class IN ( SELECT class FROM users WHERE email = '${req.body.email}')`;
     // Attempt to connect and execute queries if connection goes through
     connection.on("connect", err => {
       if (err) {
