@@ -2,12 +2,12 @@ const express = require('express');
 const request = require('request');
 const func = require('./functions');
 const app = express();
+
+// Connection to mongoDB
 const {MongoClient} = require('mongodb');
-const uri = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+const uri = "mongodb+srv://admin:By9b9736XkUGKcr@partnerme.jv6xf.mongodb.net/<dbname>?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 client.connect();
-
-// databasesList = await client.db().admin().listDatabases();
 
 
 var bodyParser = require('body-parser');
@@ -260,8 +260,8 @@ app.post('/matching/swiperight', (req,response)=>{
   if(req.body.currentUser == undefined || req.body.otherUser == undefined){
     response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
   }
-  var matchlistdb = client.db("partnerme").collection('matchlist');
-  var nomatchlistdb = client.db("partnerme").collection('nomatchlist');
+  var matchlistdb = client.db("PartnerMe").collection('matchlist');
+  var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
   var bool = false;
   setTimeout(function() {
     // Fetch the document that we modified
@@ -333,7 +333,7 @@ app.post('/matching/swiperight', (req,response)=>{
            * When the user matches with the other user, we gotta update both messagelist
            */
             if(element.name == req.body.currentUser){
-              var messagelistdb = client.db("partnerme").collection('messagelist');
+              var messagelistdb = client.db("PartnerMe").collection('messagelist');
               /* Update the current user's message list */
               messagelistdb.findOne({'user': req.body.currentUser}, function(err, result){
                 if(err) throw err;
@@ -404,7 +404,7 @@ app.post('/matching/swipeleft', (req,response)=>{
     response.send("Cannot update method due to request object not valid");
   }
   else{
-    var nomatchlistdb = client.db("partnerme").collection("nomatchlist");
+    var nomatchlistdb = client.db("PartnerMe").collection("nomatchlist");
     nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err,item){
       if(err) throw err;
       if(item == undefined){
@@ -444,7 +444,7 @@ app.post('/messages/getchat', (req,response)=>{
   else{
     var names = [req.body.otherUser, req.body.currentUser];
     names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-    var messagedb = client.db("partnerme").collection('chat');
+    var messagedb = client.db("PartnerMe").collection('chat');
 
     setTimeout(function() {
       // Fetch the document that we modified
@@ -469,7 +469,7 @@ app.post('/messages/sendmessage', (req, response)=>{
   }
   var names = [req.body.otherUser, req.body.currentUser];
   names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-  var messagedb = client.db("partnerme").collection('chat');
+  var messagedb = client.db("PartnerMe").collection('chat');
   setTimeout(function() {
     // Fetch the document that we modified
     messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item){
@@ -508,7 +508,7 @@ app.post('/messages/messagelist', (req,response)=>{
   if(req.body.currentUser == undefined){
     response.send("Cannot obtain messagelist due to undefined request parameters" , 400);
   }
-  var messagelistdb = client.db("partnerme").collection('messagelist');
+  var messagelistdb = client.db("PartnerMe").collection('messagelist');
   setTimeout(function() {
     // Fetch the document that we modified
     messagelistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
@@ -528,7 +528,7 @@ app.post('/messages/nomatchlist', (req,response)=>{
   if(req.body.currentUser == undefined){
     response.send("Cannot obtain nomatchlist due to undefined request parameters" , 400);
   }
-  var nomatchlistdb = client.db("partnerme").collection('nomatchlist');
+  var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
   setTimeout(function() {
     // Fetch the document that we modified
     nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
