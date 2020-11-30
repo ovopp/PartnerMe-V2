@@ -36,37 +36,21 @@ const config = {
 };
 
 app.use(express.json());
-const connection = new Connection(config);
+
 /**
  * hello
  * simple endpoint to run SQL scripts to change DB
  */
 app.get('/dbproxy' , (request, response)=>{
-  const connection = new Connection(config);
   var reqString = `SELECT * FROM users`;
-  connection.on("connect", err => {
-    if (err) {
-      console.log("error");
-      console.error(err.message);
-    }
-    else {
-      const sqlreq = new Request(
-        reqString, 
-        (err, rowCount, rows) => {
-          if (err) {
+            
+    querySelectDatabase(reqString, function(err, rowCount, rows){
+	if (err) {
             console.error(err.message);
-          } else {
-            console.log("success");
-            console.log(rowCount);
-            console.log(rows);
-            response.send(rows);
-            connection.close();
-          }
-        }
-      );
-      connection.execSql(sqlreq);
-    }
-  });
+	} else {
+	    response.send(rows);
+	}
+    });
 });
 
 
@@ -81,77 +65,54 @@ app.post('/user/update', (request, response)=>{
     response.send({"message": "Cannot update user because the request body is undefined"}, 400);
   }
   else{
-  const connection = new Connection(config);
-  var reqString = `UPDATE users SET name = '${request.body.name}' , language = '${request.body.language}', 
+      var reqString = `UPDATE users SET name = '${request.body.name}' , language = '${request.body.language}', 
   class = '${request.body.class}', availability = '${request.body.availability}', hobbies = '${request.body.hobbies}' WHERE email = '${request.body.email}'`;
-  connection.on("connect", err => {
-    if (err) {
-      console.log("error");
-      console.error(err.message);
-    }
-    else {
-      const sqlreq = new Request(
-        reqString, 
-        (err, rowCount) => {
-          if (err) {
-            console.error(err.message);
-            response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
-          } else {
-            console.log("success");
-            response.send({"success" : true});
-            connection.close();
-          }
-        }
-      );
-      connection.execSql(sqlreq);
-    }
-  });
-}
+      queryDatabase(reqString, function(err, rowCount){
+	  if (err) {
+	      console.error(err.message);
+	      response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
+	  } else {
+	      response.send({"success" : true});
+	  }
+      });
+  }
 });
 
 
 
 app.post('/user/current-user', (request,response)=>{
-  if(request.body.email == undefined){
-    response.send({"message": "Request query is invalid for current user"}, 400);
-  }
-  else{
-  const connection = new Connection(config);
-  var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
-  connection.on("connect", err => {
-    if (err) {
-      console.log("error");
-      console.error(err.message);
+    if(request.body.email == undefined){
+	response.send({"message": "Request query is invalid for current user"}, 400);
     }
-    else {
-      const sqlreq = new Request(
-        reqString, 
-        (err, rowCount, rows) => {
-          if (err) {
-            console.error(err.message);
-            response.send(err, 400);
-            connection.close();
-          } else {
-            if (rowCount != 0){
-              response.send({"error" : "No user found, please resign-in and register"} , 400);
-            }
-            var item = {
-              "Name" : rows[0][0].value ,
-              "Class" : rows[0][1].value ,
-              "Language" : rows[0][2].value,
-              "Availability" : rows[0][3].value,
-              "Hobbies" : rows[0][4].value,
-              "Email" : rows[0][5].value
-              };
-              response.send({"user": item});
-            connection.close();
-          }
-        }
-      );
-      connection.execSql(sqlreq);
+    else{
+	var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
+	querySelectDatabase(reqString, function(err, rowCount, rows){
+	    if (err) {
+		console.log("error");
+		console.error(err.message);
+	    } else {
+		if (err) {
+		    console.error(err.message);
+		    response.send(err, 400);
+		    connection.close();
+		} else {
+		    if (rowCount != 0){
+			response.send({"error" : "No user found, please resign-in and register"} , 400);
+		    }
+		    var item = {
+			"Name" : rows[0][0].value ,
+			"Class" : rows[0][1].value ,
+			"Language" : rows[0][2].value,
+			"Availability" : rows[0][3].value,
+			"Hobbies" : rows[0][4].value,
+			"Email" : rows[0][5].value
+		    };
+		    response.send({"user": item});
+		    connection.close();
+		}
+	    }
+	});	
     }
-  });
-}
 });
 
 //////// AUTH SERVICE ////////
