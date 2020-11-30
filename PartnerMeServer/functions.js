@@ -1,23 +1,15 @@
-const { Connection, Request } = require("tedious");
+var mysql = require('mysql');
 var similarity = require( 'compute-cosine-similarity' );
 
 const config = {
-    authentication: {
-      options: {
-        userName: "partnermeteam",
-        password: "df67POIL!#"
-      },
-      type: "default"
-    },
+    user "partnermeteam",
+    password: "df67POIL!#",
     server: "partnerme.database.windows.net",
-    options: {
-      database: "PartnerMe",
-      encrypt: true,
-      rowCollectionOnRequestCompletion: true
-    }
-  };
+    database: "partnerme",
+    encrypt: true
+};
 
-  const connection = new Connection(config);
+const connection = new Connection(config);
 
 function cosineSim(req, reqString){
   var t = new Date();
@@ -222,41 +214,53 @@ function cosineSim(req, reqString){
       return {"match_result" :return_list};
   }
 
-function queryDatabase(query) {
+function queryDatabase(query, callback) {
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
+	    const request = new Request(
+		query,
+		(err, rowCount) => {
+		    if (err) {
+			callback(err,null);
+		    } else {
+			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
+			callback(null,rowCount);
+		    }
+		}
+	    );
+	    console.log(connection.execSql(request));
+	}
+    });
+}
 
-    // Performs the given sql query
-    const request = new Request(
-      query,
-      (err, rowCount) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-          return rowCount;
-        }
-      }
-    );
-  
-      connection.execSql(request);
-  }
-
-function querySelectDatabase(query) {
-
-    // Performs the given sql query
-    const request = new Request(
-      query,
-      (err, rowCount, rows) => {
-        if (err) {
-          console.error(err.message);
-        } else {
-          console.log(`Success: ${rowCount} row(s) returned`);
-      return rows;
-        }
-      }
-    );
-  
-      return connection.execSql(request);
-  }
+function querySelectDatabase(query, callback) {
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
+	    const request = new Request(
+		query,
+		(err, rowCount, rows) => {
+		    if (err) {
+			callback(err,null);
+		    } else {
+			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
+			callback(null,rows);
+		    }
+		}
+	    );
+	    console.log(connection.execSql(request));
+	}
+    });
+}
 
 function compare( a, b ) {
     if ( a.similarity > b.similarity ){
