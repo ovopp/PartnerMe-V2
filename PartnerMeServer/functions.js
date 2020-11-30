@@ -253,7 +253,7 @@ function querySelectDatabase(query, callback) {
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
 			connection.close();
-			callback(null,rows);
+			callback(null,rowCount,rows);
 		    }
 		}
 	    );
