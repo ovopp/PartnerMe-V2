@@ -28,7 +28,7 @@ Solving the problem of finding the perfect study partner.
 
 ## Tables
 
--   users
+###  users
 -   ID INT NOT NULL IDENTITY
 -   email VARCHAR (255)
 -   name VARCHAR(255)
@@ -36,9 +36,10 @@ Solving the problem of finding the perfect study partner.
 -   language VARCHAR(255)
 -   availability VARCHAR(255)
 -   hobbies NVARCHAR(max)
+-   token VARCHAR(max)
 -   PRIMARY KEY (ID)
 -   UNIQUE (email)
--   meetings
+###  meetings
 -   ID INT NOT NULL IDENTITY
 -   user1_ID INT
 -   user2_ID INT
@@ -47,7 +48,7 @@ Solving the problem of finding the perfect study partner.
 -   PRIMARY KEY (ID)
 -   FOREIGN KEY (user1_ID) REFERENCES users(ID)
 -   FOREIGN KEY (user2_ID) REFERENCES users(ID)
--   messages
+###  messages
 -   ID INT NOT NULL IDENTITY
 -   user1_ID INT
 -   user2_ID INT
