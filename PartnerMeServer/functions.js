@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+const { Connection, Request } = require("tedious");
 var similarity = require( 'compute-cosine-similarity' );
 
 const config = {
