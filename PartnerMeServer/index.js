@@ -59,6 +59,25 @@ app.post('/user/update', (request, response)=>{
   }
 });
 
+app.post('/user/updatetoken', (req, response) =>{
+	if(req.body.email == undefined || req.body.token == undefined){
+		response.send({"message" : "Cannot update user token because the request body is undefined"}, 400);
+	}
+	else{
+		var reqString = `UPDATE users SET token = '${req.body.token}' WHERE email = '${req.body.email}'`;
+		func.queryDatabase(reqString, function(err, rowCount){
+			if(err){
+				console.error(err.message);
+	      		response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
+			}
+			else{
+				response.send({"success": true});
+			}
+		});
+	}
+
+})
+
 
 
 app.post('/user/current-user', (request,response)=>{
