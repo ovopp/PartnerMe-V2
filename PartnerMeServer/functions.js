@@ -2,11 +2,19 @@ const { Connection, Request } = require("tedious");
 var similarity = require( 'compute-cosine-similarity' );
 
 const config = {
-    user "partnermeteam",
-    password: "df67POIL!#",
-    server: "partnerme.database.windows.net",
-    database: "partnerme",
-    encrypt: true
+    authentication: {
+    options: {
+      userName: "partnermeteam",
+      password: "df67POIL!#"
+    },
+    type: "default"
+  },
+  server: "partnerme.database.windows.net",
+  options: {
+    database: "PartnerMe",
+    encrypt: true,
+    rowCollectionOnRequestCompletion: true
+  }
 };
 
 const connection = new Connection(config);
@@ -249,7 +257,7 @@ function querySelectDatabase(query, callback) {
 		query,
 		(err, rowCount, rows) => {
 		    if (err) {
-			callback(err,null);
+			callback(err,null,null);
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
 			connection.close();
