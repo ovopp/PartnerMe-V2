@@ -146,7 +146,7 @@ app.post('/matching/getmatch', (req, response) => {
 	var reqString =  `SELECT * FROM users WHERE class IN ( SELECT class FROM users WHERE email = '${req.body.email}')`;
 	// Attempt to connect and execute queries if connection goes through
 		func.cosineSim(req, reqString, function(result){
-			response.send(result, 200);
+			response.send({"match result" : result}, 200);
 		});
 	};
 });
