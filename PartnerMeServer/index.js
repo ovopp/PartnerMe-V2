@@ -488,11 +488,6 @@ app.post('/messages/nomatchlist', (req,response)=>{
 });
 
 
-// Collaboration Service
-app.post('/collaboration/schedule', (request, response)=>{
-    response.send('matching services');
-});
-
 app.use(express.urlencoded({
     extended: true
 }));
