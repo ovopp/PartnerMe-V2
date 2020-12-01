@@ -19,120 +19,10 @@ const config = {
 
 const connection = new Connection(config);
 
-function cosineSim(req, reqString){
-  var t = new Date();
-  var n = t.getTime();
+function cosineSim(req, reqString, callback){
     var return_list = [];
     var return_user_list = [];
     var user_hobby_list = [];
-    // var user_hobby_list = ['CPEN', 'elec', 'dogs'];
-    // var response_return = [{"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"elec, dogs",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"dogs",
-    // "email":"test"},{"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"elec, dogs",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"dogs",
-    // "email":"test"},{"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"elec, dogs",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"dogs",
-    // "email":"test"},{"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test, asdf, fdasd",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, test",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"elec, dogs",
-    // "email":"test"}, {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"dogs",
-    // "email":"test"}];
-    // var user = {"name":"test",
-    // "class":"test",
-    // "language":"test",
-    // "availability":"test",
-    // "hobbies":"CPEN, elec, dogs",
-    // "email":"test"}
     const request = new Request(
       reqString,
        (err, rowCount, rows) => {
@@ -141,37 +31,26 @@ function cosineSim(req, reqString){
          } else {
            console.log(`${rowCount} row(s) returned`);
            if(rowCount == 0){
-            return {"match_result" : []}
+            callback([]);
            }
+           else{
            for(let i = 0 ; i < rows.length ; i++){
-             if(req.body.email == rows[i][5].value)
+             if(req.body.email == rows[i][1].value)
              {
-               user_hobby_list = rows[i][4].value.split(", ");
+               user_hobby_list = rows[i][6].value.split(", ");
              }
              else{
              var item = {
-               "Name" : rows[i][0].value ,
-               "Class" : rows[i][1].value ,
-               "Language" : rows[i][2].value,
-               "Availability" : rows[i][3].value,
-               "Hobbies" : rows[i][4].value,
-               "Email" : rows[i][5].value
+               "Name" : rows[i][2].value ,
+               "Class" : rows[i][3].value ,
+               "Language" : rows[i][4].value,
+               "Availability" : rows[i][5].value,
+               "Hobbies" : rows[i][6].value,
+               "Email" : rows[i][1].value
                }
                return_user_list.push(item);
              }
            }
-           connection.close();
-          // for(let i = 0; i < response_return.length; i ++){
-          //   var item = {
-          //                "Name" : response_return[i].name ,
-          //                "Class" : response_return[i].class,
-          //                "Language" : response_return[i].language,
-          //                "Availability" : response_return[i].availability,
-          //                "Hobbies" : response_return[i].hobbies,
-          //                "Email" : response_return[i].email
-          //                }
-          //   return_user_list.push(item);
-          // }
 
            for(let i = 0; i < return_user_list.length ; i++){
              var otherUserList = return_user_list[i].Hobbies.split(", ");
@@ -214,21 +93,15 @@ function cosineSim(req, reqString){
              return_list.push({"similarity" : similarity(otherUserList, userHobbyListTmp), "userList": return_user_list[i]});
            }
            return_list.sort(compare);
-           // response.send({"match result" :return_list});
+           callback(return_list);
          }
+        }
        }
      );
       connection.execSql(request);
-      return {"match_result" :return_list};
   }
 
 function queryDatabase(query, callback) {
-    connection.on("connect", err => {
-	if (err) {
-	    console.log("error");
-	    console.error(err.message);
-	}
-	else {
 	    const request = new Request(
 		query,
 		(err, rowCount) => {
@@ -236,23 +109,14 @@ function queryDatabase(query, callback) {
 			callback(err,null);
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
-			connection.close();
 			callback(null,rowCount);
 		    }
 		}
 	    );
-	    console.log(connection.execSql(request));
-	}
-    });
+	    connection.execSql(request);
 }
 
 function querySelectDatabase(query, callback) {
-    connection.on("connect", err => {
-	if (err) {
-	    console.log("error");
-	    console.error(err.message);
-	}
-	else {
 	    const request = new Request(
 		query,
 		(err, rowCount, rows) => {
@@ -260,14 +124,11 @@ function querySelectDatabase(query, callback) {
 			callback(err,null,null);
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
-			connection.close();
 			callback(null,rowCount,rows);
 		    }
 		}
 	    );
-	    console.log(connection.execSql(request));
-	}
-    });
+	    connection.execSql(request);
 }
 
 function compare( a, b ) {

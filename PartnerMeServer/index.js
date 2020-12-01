@@ -3,6 +3,7 @@ const request = require('request');
 const func = require('./functions');
 const app = express();
 
+
 // Connection to mongoDB
 const {MongoClient} = require('mongodb');
 const uri = "mongodb+srv://admin:By9b9736XkUGKcr@partnerme.jv6xf.mongodb.net/<dbname>?retryWrites=true&w=majority";
@@ -58,6 +59,25 @@ app.post('/user/update', (request, response)=>{
   }
 });
 
+app.post('/user/updatetoken', (req, response) =>{
+	if(req.body.email == undefined || req.body.token == undefined){
+		response.send({"message" : "Cannot update user token because the request body is undefined"}, 400);
+	}
+	else{
+		var reqString = `UPDATE users SET token = '${req.body.token}' WHERE email = '${req.body.email}'`;
+		func.queryDatabase(reqString, function(err, rowCount){
+			if(err){
+				console.error(err.message);
+	      		response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
+			}
+			else{
+				response.send({"success": true});
+			}
+		});
+	}
+
+})
+
 
 
 app.post('/user/current-user', (request,response)=>{
@@ -67,30 +87,20 @@ app.post('/user/current-user', (request,response)=>{
     else{
 	var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
 	func.querySelectDatabase(reqString, function(err, rowCount, rows){
-	    if (err) {
-		console.log("error");
-		console.error(err.message);
-	    } else {
-		if (err) {
-		    console.error(err.message);
-		    response.send(err, 400);
-		    connection.close();
-		} else {
-		    if (rowCount != 0){
-			response.send({"error" : "No user found, please resign-in and register"} , 400);
-		    }
-		    var item = {
-			"Name" : rows[0][0].value ,
-			"Class" : rows[0][1].value ,
-			"Language" : rows[0][2].value,
-			"Availability" : rows[0][3].value,
-			"Hobbies" : rows[0][4].value,
-			"Email" : rows[0][5].value
-		    };
-		    response.send({"user": item});
-		    connection.close();
+		if (rowCount == 0){
+		response.send({"error" : "No user found, please resign-in and register"} , 400);
 		}
-	    }
+		var item = {
+			"ID" : rows[0][0].value ,
+			"Email" : rows[0][1].value ,
+			"Name" : rows[0][2].value,
+			"Class" : rows[0][3].value,
+			"Language" : rows[0][4].value,
+			"Availability" : rows[0][5].value,
+			"Hobbies" : rows[0][6].value,
+			"Token" : rows[0][7].value
+		};
+		response.send({"user": item});
 	});	
     }
 });
@@ -114,8 +124,7 @@ app.post('/auth/check', (request, response)=>{
 		else{
 		    response.send({"success" : false});
 		}
-		connection.close();
-	    }
+	}
 	});
     }
 });
@@ -124,17 +133,17 @@ app.post('/auth/create', (request, response)=>{
     // check is user_id is already in db, return error
     // connect to auth db and update with user_id and password
     if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
-	response.send({"message": "Create new user failed due to request fields not being valid"}, 400);
+		response.send({"message": "Create new user failed due to request fields not being valid"}, 400);
     }
     else{
 	var reqString = `INSERT INTO users (name, class, language, availability, hobbies, email) VALUES('${request.body.name}', '${request.body.class}', '${request.body.language}','${request.body.availability}', '${request.body.hobbies}', '${request.body.email}')`;
 
 	func.querySelectDatabase(reqString, function(err, rowCount, rows){
 	    if (err) {
-		console.error(err.message);
+		console.error(err);
 		response.send({"error" : "User was not created due to error with connection to database"}, 400);
 	    } else {
-		response.send({"success": true});
+		response.send({"success": true}, 200);
 	    }
 	});
     }
@@ -155,17 +164,36 @@ app.post('/matching/getmatch', (req, response) => {
     else{
 	var reqString =  `SELECT * FROM users WHERE class IN ( SELECT class FROM users WHERE email = '${req.body.email}')`;
 	// Attempt to connect and execute queries if connection goes through
-	connection.on("connect", err => {
-	    if (err) {
-		console.log("error");
-		console.error(err.message);
-	    } 
-	    else {
-		response.send(func.cosineSim(req, reqString))
-	    }   
-	});
-    }
+		func.cosineSim(req, reqString, function(result){
+			response.send({"match result" : result}, 200);
+		});
+	};
 });
+
+// function removeNoMatchUsers(match_list, user_email){
+// 	var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
+// 	var match_list_pruned = match_list;
+// 	console.log(match_list_pruned);
+// 	    // Fetch the document that we modified
+// 	nomatchlistdb.findOne({'user' : user_email}, function(err, item) {
+// 		if(err) throw err;
+// 		if(item === undefined){
+// 			return match_list_pruned;
+// 		}
+// 		else{
+// 			console.log(match_list_pruned);
+// 			item.chatlog.forEach(element => {
+// 				for(var i = 0; i < match_list_pruned.length; i++){
+// 					if(match_list_pruned[i].userList.Email === element){
+// 						match_list_pruned.splice(i,1);
+// 						i--;
+// 					}
+// 				}
+// 			});
+// 			return match_list_pruned;
+// 		}
+// 	});
+// }
 
 
 /**
@@ -458,7 +486,6 @@ app.post('/messages/nomatchlist', (req,response)=>{
 	});
     }, 100);
 });
-
 
 
 // Collaboration Service
