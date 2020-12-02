@@ -46,7 +46,8 @@ function cosineSim(req, reqString, callback){
                "Language" : rows[i][4].value,
                "Availability" : rows[i][5].value,
                "Hobbies" : rows[i][6].value,
-               "Email" : rows[i][1].value
+               "Email" : rows[i][1].value,
+               "Token" : rows[i][7].value
                }
                return_user_list.push(item);
              }

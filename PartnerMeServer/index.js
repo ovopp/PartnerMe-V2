@@ -27,31 +27,6 @@ admin.initializeApp({
 });
 
 
-// sql connectivity
-const { Connection, Request } = require("tedious");
-var similarity = require( 'compute-cosine-similarity' );
-
-const config = {
-    authentication: {
-    options: {
-      userName: "partnermeteam",
-      password: "df67POIL!#"
-    },
-    type: "default"
-  },
-  server: "partnerme.database.windows.net",
-  options: {
-    database: "PartnerMe",
-    encrypt: true,
-    rowCollectionOnRequestCompletion: true
-  }
-};
-
-const connection = new Connection(config);
-
-
-
-
 /**
  * hello
  * simple endpoint to run SQL scripts to change DB
@@ -444,11 +419,16 @@ app.post('/messages/getchat', (req,response)=>{
 	setTimeout(function() {
 	    // Fetch the document that we modified
 	    messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item) {
+        if(item == undefined){
+          response.send({"chatlog":[]},200);
+        }
+        else{
 		item.chatlog.forEach(element => {
 		    console.log(element.name);
 		    console.log(element.message);
 		});
-		response.send(item.chatlog);
+		response.send({"chatlog" : item.chatlog}, 200);
+  }
 	    });
 	}, 100);
     }
@@ -477,7 +457,7 @@ app.post('/messages/sendmessage', (req, response)=>{
 				    function(err, item) {
 					if (err) throw err;
 					console.log("1 document inserted");
-					response.send("1 document inserted", 200);
+					response.send({"chatlog": chatlog}, 200);
 				    });
 	    }
 	    else{
@@ -492,7 +472,7 @@ app.post('/messages/sendmessage', (req, response)=>{
 		messagedb.findOneAndUpdate({'user1' : names[0], 'user2' : names[1]}, update, function(err){
 		    if (err) throw err;
 		    console.log("chatlog updated");
-		    response.send(chatLog, 200);
+		    response.send({"chatlog": chatLog}, 200);
 		})
 	    }
 	})
