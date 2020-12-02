@@ -486,7 +486,7 @@ app.post('/messages/messagelist', (req,response)=>{
 		response.send([], 200);
 	    }
 	    else{
-		response.send({"listtofusers" : item.messagelist}, 200);
+		response.send({"listofusers" : item.messagelist}, 200);
 	    }
 	});
     }, 100);
