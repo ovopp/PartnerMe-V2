@@ -1,11 +1,11 @@
-function queryDatabase(query) {
-	return "Would have ran ${query}";
+function queryDatabase(query, callback) {
+    callback(null, "Would have ran ${query}");
 }
 
 export default queryDatabase;
 
-function querySelectDatabase(query) {
-    return "Example row for query: ${query}";
+function querySelectDatabase(query, callback) {
+    callback(null, "Would have ran ${query}", "Example row for query: ${query}");
 }
 
 export default querySelectDatabase;

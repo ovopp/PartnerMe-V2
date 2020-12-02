@@ -102,34 +102,35 @@ function cosineSim(req, reqString, callback){
   }
 
 function queryDatabase(query, callback) {
-	    const request = new Request(
-		query,
-		(err, rowCount) => {
-		    if (err) {
-			callback(err,null);
-		    } else {
-			console.log(`Success: ${rowCount} row(s) returned`);
-			callback(null,rowCount);
-		    }
-		}
-	    );
-	    console.log(connection.execSql(request));
+    const request = new Request(
+	query,
+	(err, rowCount) => {
+	    if (err) {
+		callback(err,null);
+	    } else {
+		console.log(`Success: ${rowCount} row(s) returned`);
+		callback(null,rowCount);
+	    }
 	}
+    );
+    console.log(connection.execSql(request));
+}
 
 function querySelectDatabase(query, callback) {
-	    const request = new Request(
-		query,
-		(err, rowCount, rows) => {
-		    if (err) {
-			callback(err,null,null);
-		    } else {
-			console.log(`Success: ${rowCount} row(s) returned`);
-			callback(null,rowCount,rows);
-		    }
-		}
-	    );
-	    console.log(connection.execSql(request));
+    const request = new Request(
+	query,
+	(err, rowCount, rows) => {
+	    if (err) {
+		callback(err,null,null);
+	    } else {
+		console.log(`Success: ${rowCount} row(s) returned`);
+		callback(null,rowCount,rows);
+	    }
 	}
+    );
+    console.log(connection.execSql(request));
+}
+
 
 function compare( a, b ) {
     if ( a.similarity > b.similarity ){
