@@ -18,6 +18,14 @@ const { InsufficientStorage } = require('http-errors');
 
 app.use(express.json());
 
+var admin = require("firebase-admin");
+var serviceAccount = require("./firebasekey.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://my-application-5befc.firebaseio.com"
+});
+
+
 /**
  * hello
  * simple endpoint to run SQL scripts to change DB
@@ -200,7 +208,7 @@ app.post('/matching/getmatch', (req, response) => {
  * Match swipe right
  */
 app.post('/matching/swiperight', (req,response)=>{
-    if(req.body.currentUser == undefined || req.body.otherUser == undefined){
+    if(req.body.currentUser == undefined || req.body.otherUser == undefined || req.body.token == undefined){
 	response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
     }
     var matchlistdb = client.db("PartnerMe").collection('matchlist');
@@ -324,6 +332,24 @@ app.post('/matching/swiperight', (req,response)=>{
 					});
 				    }
 				})
+
+				var usertoken = req.body.token;
+
+				var payload = {
+				  notification: {
+					title: "Alert",
+					body: "Match was found"
+				  }
+				};
+	
+				admin.messaging().sendToDevice(usertoken, payload)
+				  .then(function(response) {
+					console.log("Successfully sent message:", response);
+				  })
+				  .catch(function(error) {
+					console.log("Error sending message:", error);
+				  });
+
 				response.send({'success' : "User was a match! Both updated"} , 200);
 				bool = true;
 			    }
