@@ -1,8 +1,8 @@
+require('events').EventEmitter.prototype._maxListeners = 0;
 const express = require('express');
 const request = require('request');
 const func = require('./functions');
 const app = express();
-require('events').EventEmitter.prototype._maxListeners = 100;
 
 
 // Connection to mongoDB
@@ -25,6 +25,31 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://my-application-5befc.firebaseio.com"
 });
+
+
+// sql connectivity
+const { Connection, Request } = require("tedious");
+var similarity = require( 'compute-cosine-similarity' );
+
+const config = {
+    authentication: {
+    options: {
+      userName: "partnermeteam",
+      password: "df67POIL!#"
+    },
+    type: "default"
+  },
+  server: "partnerme.database.windows.net",
+  options: {
+    database: "PartnerMe",
+    encrypt: true,
+    rowCollectionOnRequestCompletion: true
+  }
+};
+
+const connection = new Connection(config);
+
+
 
 
 /**
