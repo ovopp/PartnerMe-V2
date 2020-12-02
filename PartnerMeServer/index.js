@@ -324,7 +324,7 @@ app.post('/matching/swiperight', (req,response)=>{
 					});
 				    }
 				})
-				response.send({'success' : "User was a match! Both updated"} , 200);
+				response.send({'success' : "User was a match! You can now message each other"} , 200);
 				bool = true;
 			    }
 			});
