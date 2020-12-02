@@ -32,7 +32,7 @@ describe("App post user update #1", () => {
 });
 
 describe("App post user update #2", () => {
-    it("Should return with not success", async () => {
+    it("Should return with success", async () => {
 	const input = {"name":"test",
 		       "class":"test",
 		       "language":"test",
@@ -40,7 +40,7 @@ describe("App post user update #2", () => {
 		       "hobbies":"test",
 		       "email":"test"};
         const data = await req.post('/user/update').send(input);
-	expect(data.body.success).toBeFalsy();
+	expect(data.body.success).toBeTruthy();
     });
 });
 
@@ -116,7 +116,7 @@ describe("App post auth create #1", () => {
 });
 
 describe("App post auth create #2", () => {
-    it("Should return with fail", async () => {
+    it("Should return with not success", async () => {
 	const input = {"name":"test",
 		       "class":"test",
 		       "language":"test",

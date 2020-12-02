@@ -24,7 +24,7 @@ describe("STARTING SIGNIN AS NEW USER: App post checks to see if the user exists
     it("It should return False since we don't have the user in the database", async () => {
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
-    expect(data.body.error).toBeTruthy();
+    expect(data.body.error).toBeFalsy();
     done();
     });
 });
@@ -38,7 +38,7 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "hobbies":"",
         "email":"vincentyan8@test.com"};
 		const data = await req.post('/auth/create').send(input);
-    expect(data.body.message).toBeTruthy();
+    expect(data.body.message).toBeFalsy();
     done();
     });
 });
