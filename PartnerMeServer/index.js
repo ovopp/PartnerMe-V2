@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const func = require('./functions');
 const app = express();
+require('events').EventEmitter.prototype._maxListeners = 100;
 
 
 // Connection to mongoDB
