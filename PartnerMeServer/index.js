@@ -486,7 +486,7 @@ app.post('/messages/messagelist', (req,response)=>{
 		response.send([], 200);
 	    }
 	    else{
-		response.send(item.messagelist, 200);
+		response.send({"listofusers" : item.messagelist}, 200);
 	    }
 	});
     }, 100);
@@ -513,11 +513,6 @@ app.post('/messages/nomatchlist', (req,response)=>{
     }, 100);
 });
 
-
-// Collaboration Service
-app.post('/collaboration/schedule', (request, response)=>{
-    response.send('matching services');
-});
 
 app.use(express.urlencoded({
     extended: true

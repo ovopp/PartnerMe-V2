@@ -51,8 +51,8 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "availability":"test",
         "hobbies":"test",
         "email":"vincentyan8@test.com"};
-		const data = await req.post('/auth/create').send(input);
-    expect(data.body.success).toBeTruthy();
+	const data = await req.post('/auth/create').send(input)
+	expect(data.body.success).toBeTruthy();
     done();
     });
 });
@@ -62,7 +62,7 @@ describe("Check to make sure user is added successfully", () => {
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
     expect(data.body.success).toBeTruthy();
-    done();
+	done();
     });
 });
 
@@ -100,7 +100,6 @@ describe("STARTING UPDATING USER INFO: App post user/current/user. Check to make
     "availability":"test",
     "hobbies":"test",
     "email":"vincentyan8@test.com"}).toBeTruthy();
-    done();
     });
 });
 
@@ -109,7 +108,6 @@ describe("App post user/current-user. Check to make sure user user exists in our
 	const input = {"email": "asdf@blahblah.com"};
 	const data = await req.post('/user/current-user').send(input);
     expect(data.body.error === "No user found, please resign-in and register").toBeTruthy();
-    done();
     });
 });
 
@@ -124,7 +122,6 @@ describe("App post user update. Updating user information", () => {
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
     expect(data.body.success ==  true).toBeTruthy();
-    done();
     });
 });
 
@@ -137,7 +134,6 @@ describe("App post user update. Updating user information fail", () => {
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
     expect(data.body.message ==  "Cannot update user because the request body is undefined").toBeTruthy();
-    done();
     });
 });
 
@@ -145,13 +141,18 @@ describe("App post /user/current-user. Check to make sure update was successful"
     it("Should return with success", async () => {
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/user/current-user').send(input);
-	expect(data.body.user ==  {"name":"test1",
-    "class":"test1",
-    "language":"test1",
-    "availability":"test1",
-    "hobbies":"test1",
-    "email":"vincentyan8@test.com"}).toBeTruthy();
-    done();
+	expect(data.body ==  {
+        "user": {
+            "ID": 7,
+            "Email": "vincentyan8@test.com",
+            "Name": "test1",
+            "Class": "test1",
+            "Language": "test1",
+            "Availability": "test1",
+            "Hobbies": "test1",
+            "Token": null
+        }
+    }).toBeTruthy();
     });
 });
 
@@ -173,7 +174,6 @@ describe("App post /matching/getmatch. Gets a list of matches for new user based
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/matching/getmatch').send(input);
     expect(data.body.match_result == []).toBeTruthy();
-    done();
     });
 });
 
@@ -182,8 +182,8 @@ describe("App post /matching/getmatch. Gets a list of matches for an old user ba
     it("Should return with success, and have matches", async () => {
 	const input = {"email":"vincentyan8@gmail.com"};
     const data = await req.post('/matching/getmatch').send(input);
+    console.log(data);
     expect(data.body.match_result.length >= 0).toBeTruthy();
-    done();
     });
 });
 
