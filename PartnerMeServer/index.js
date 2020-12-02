@@ -423,10 +423,6 @@ app.post('/messages/getchat', (req,response)=>{
           response.send({"chatlog":[]},200);
         }
         else{
-		item.chatlog.forEach(element => {
-		    console.log(element.name);
-		    console.log(element.message);
-		});
 		response.send({"chatlog" : item.chatlog}, 200);
   }
 	    });
@@ -462,7 +458,6 @@ app.post('/messages/sendmessage', (req, response)=>{
 	    }
 	    else{
 		var chatLog = item.chatlog;
-		console.log(chatLog);
 		var message = {
 		    'name' : req.body.currentUser,
 		    'message' : req.body.message
