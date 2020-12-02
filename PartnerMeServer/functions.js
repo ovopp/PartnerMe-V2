@@ -102,6 +102,12 @@ function cosineSim(req, reqString, callback){
   }
 
 function queryDatabase(query, callback) {
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
 	    const request = new Request(
 		query,
 		(err, rowCount) => {
@@ -109,14 +115,23 @@ function queryDatabase(query, callback) {
 			callback(err,null);
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
 			callback(null,rowCount);
 		    }
 		}
 	    );
-	    connection.execSql(request);
+	    console.log(connection.execSql(request));
+	}
+    });
 }
 
 function querySelectDatabase(query, callback) {
+    connection.on("connect", err => {
+	if (err) {
+	    console.log("error");
+	    console.error(err.message);
+	}
+	else {
 	    const request = new Request(
 		query,
 		(err, rowCount, rows) => {
@@ -124,11 +139,14 @@ function querySelectDatabase(query, callback) {
 			callback(err,null,null);
 		    } else {
 			console.log(`Success: ${rowCount} row(s) returned`);
+			connection.close();
 			callback(null,rowCount,rows);
 		    }
 		}
 	    );
-	    connection.execSql(request);
+	    console.log(connection.execSql(request));
+	}
+    });
 }
 
 function compare( a, b ) {
