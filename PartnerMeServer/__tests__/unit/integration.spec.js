@@ -5,7 +5,7 @@ var email1 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
 var email2 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
 var email3 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
 var email4 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
-console.log(email1);
+
 
 
 /**

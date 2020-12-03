@@ -7,7 +7,7 @@ const func = require("../../functions");
 
 // jest.mock("../../SQLquery") //Unsure about this line
 
-block //To stop test from running prematurely (leave error in until ready)
+// block //To stop test from running prematurely (leave error in until ready)
 
 /* MESSAGING FUNCTIONS */
 describe("App POST get chat #1", () =>{
