@@ -31,17 +31,6 @@ admin.initializeApp({
  * hello
  * simple endpoint to run SQL scripts to change DB
  */
-app.get('/dbproxy' , (request, response)=>{
-  var reqString = `SELECT * FROM users`;
-            
-    func.querySelectDatabase(reqString, function(err, rowCount, rows){
-	if (err) {
-            console.error(err.message);
-	} else {
-	    response.send(rows);
-	}
-    });
-});
 
 
 app.get('/', (request, response) => {
@@ -86,8 +75,6 @@ app.post('/user/updatetoken', (req, response) =>{
 	}
 
 })
-
-
 
 app.post('/user/current-user', (request,response)=>{
     if(request.body.email == undefined){
@@ -178,31 +165,6 @@ app.post('/matching/getmatch', (req, response) => {
 		});
 	};
 });
-
-// function removeNoMatchUsers(match_list, user_email){
-// 	var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
-// 	var match_list_pruned = match_list;
-// 	console.log(match_list_pruned);
-// 	    // Fetch the document that we modified
-// 	nomatchlistdb.findOne({'user' : user_email}, function(err, item) {
-// 		if(err) throw err;
-// 		if(item === undefined){
-// 			return match_list_pruned;
-// 		}
-// 		else{
-// 			console.log(match_list_pruned);
-// 			item.chatlog.forEach(element => {
-// 				for(var i = 0; i < match_list_pruned.length; i++){
-// 					if(match_list_pruned[i].userList.Email === element){
-// 						match_list_pruned.splice(i,1);
-// 						i--;
-// 					}
-// 				}
-// 			});
-// 			return match_list_pruned;
-// 		}
-// 	});
-// }
 
 
 /**
@@ -355,9 +317,6 @@ app.post('/matching/swiperight', (req,response)=>{
 				bool = true;
 			    }
 			});
-			if(!bool){
-			    response.send({'success' : "User has not matched with you, but when they do you will be notified"} , 200);
-			}
 		    }
 		})
 	    }
@@ -488,27 +447,6 @@ app.post('/messages/messagelist', (req,response)=>{
 	    }
 	    else{
 		response.send({"listofusers" : item.messagelist}, 200);
-	    }
-	});
-    }, 100);
-});
-
-
-app.post('/messages/nomatchlist', (req,response)=>{
-    if(req.body.currentUser == undefined){
-	response.send("Cannot obtain nomatchlist due to undefined request parameters" , 400);
-    }
-    var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
-    setTimeout(function() {
-	// Fetch the document that we modified
-	nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err, item) {
-	    if(err) throw err;
-	    if(item == undefined){
-		/* send an empty array when there's no nomatchlist */
-		response.send([],200);
-	    }
-	    else{
-		response.send(item.nomatchlist);
 	    }
 	});
     }, 100);
