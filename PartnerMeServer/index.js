@@ -203,7 +203,6 @@ app.post('/matching/swiperight', (req,response)=>{
 		match_list = [{'name' : req.body.otherUser}];
 		matchlistdb.insertOne({'user' : req.body.currentUser, 'matchlist' : match_list}, function(err,result){
 		    if(err) throw err;
-		    console.log("Inserted into Database");
 		})
 	    }
 	    else{
@@ -223,7 +222,6 @@ app.post('/matching/swiperight', (req,response)=>{
 		    var update = { $set: {'matchlist' : match_list}};
 		    matchlistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err, result){
 			if (err) throw err;
-			console.log("chatlog updated");
 		    })
 		}
 	    }
@@ -237,7 +235,6 @@ app.post('/matching/swiperight', (req,response)=>{
 			     nomatchlist : [{name:  req.body.otherUser}]
 			    },function(err, item) {
 				if (err) throw err;
-				console.log("updated current user's nomatch list");
 			    })
 		    }
 		    else{
@@ -245,8 +242,7 @@ app.post('/matching/swiperight', (req,response)=>{
 			match_list2.push({'name' : req.body.otherUser});
 			update = { $set: {'nomatchlist' : match_list2}};
 			nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err,result2){
-			    if (err) throw errl
-			    console.log("updated current user's nomatch list");
+			    if (err) throw err
 			})
 		    }
 		})
@@ -273,7 +269,6 @@ app.post('/matching/swiperight', (req,response)=>{
 					    {'user': req.body.currentUser, 'messagelist' : [{'name': req.body.otherUser}]},
 					    function(err){
 						if(err) throw(err)
-						console.log("updated messagelist");
 					    }
 					)
 				    }
@@ -296,7 +291,6 @@ app.post('/matching/swiperight', (req,response)=>{
 					    {'user': req.body.otherUser, 'messagelist' : [{'name': req.body.currentUser}]},
 					    function(err){
 						if(err) throw(err)
-						console.log("updated other user messagelist");
 					    }
 					);
 				    }
@@ -308,7 +302,6 @@ app.post('/matching/swiperight', (req,response)=>{
 					}
 					messagelistdb.findOneAndUpdate({'user' : req.body.otherUser}, update, function(err, updatereturn){
 					    if(err) throw err;
-					    console.log("updated current user's message list");
 					});
 				    }
 				})
@@ -339,7 +332,6 @@ app.post('/matching/swipeleft', (req,response)=>{
 	    if(item == undefined){
 		nomatchlistdb.insertOne({'user' : req.body.currentUser, 'nomatchlist' : [{'name' : req.body.otherUser}]}, function(err){
 		    if(err) throw err;
-		    console.log("Inserted new nomatchlist");
 		    response.send({'success' : "Successfully created and updated the nomatchlist for current user"} , 200);
 		});
 	    }
@@ -353,7 +345,6 @@ app.post('/matching/swipeleft', (req,response)=>{
 		}
 		nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser} , update, function(err){
 		    if(err) throw err;
-		    console.log("Successfully updated the nomatchlist for current user");
 		    response.send({'success' : "Successfully updated the nomatchlist for current user"} , 200);
 		});
 	    }
@@ -411,7 +402,6 @@ app.post('/messages/sendmessage', (req, response)=>{
 				     chatlog : [{name:  req.body.currentUser, message: req.body.message}]},
 				    function(err, item) {
 					if (err) throw err;
-					console.log("1 document inserted");
 					response.send({"chatlog": [{name:  req.body.currentUser, message: req.body.message}]}, 200);
 				    });
 	    }
@@ -425,7 +415,6 @@ app.post('/messages/sendmessage', (req, response)=>{
 		var update = { $set: {'chatlog': chatLog}};
 		messagedb.findOneAndUpdate({'user1' : names[0], 'user2' : names[1]}, update, function(err){
 		    if (err) throw err;
-		    console.log("chatlog updated");
 		    response.send({"chatlog": chatLog}, 200);
 		})
 	    }
@@ -436,7 +425,8 @@ app.post('/messages/sendmessage', (req, response)=>{
 app.post('/messages/messagelist', (req,response)=>{
     if(req.body.currentUser == undefined){
 	response.send("Cannot obtain messagelist due to undefined request parameters" , 400);
-    }
+	}
+	else{
     var messagelistdb = client.db("PartnerMe").collection('messagelist');
     setTimeout(function() {
 	// Fetch the document that we modified
@@ -449,7 +439,8 @@ app.post('/messages/messagelist', (req,response)=>{
 		response.send({"listofusers" : item.messagelist}, 200);
 	    }
 	});
-    }, 100);
+	}, 100);
+}
 });
 
 

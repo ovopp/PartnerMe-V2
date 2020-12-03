@@ -44,6 +44,23 @@ describe("App post user update #2", () => {
     });
 });
 
+describe("App post user update token #1", () => {
+    it("Should return with failure", async () => {
+	const input = {"token": "test",
+		       "email":"vincentyan8@test.com"};
+        const data = await req.post('/user/update').send(input);
+	expect(data).toBeTruthy();
+    });
+});
+
+describe("App post user update token #2", () => {
+    it("Should return with failure", async () => {
+	const input = {"esafsdfmail":"test"};
+        const data = await req.post('/user/updatetoken').send(input);
+	expect(data).toBeTruthy();
+    });
+});
+
 /*App post user current user */
 describe("App post user current user #1", () => {
     it("Should return with an error", async () => {
@@ -122,9 +139,9 @@ describe("App post auth create #2", () => {
 		       "language":"test",
 		       "availability":"test",
 		       "hobbies":"test",
-		       "email":"test"};
+		       "email":"test@10000.com"}; //change this to random
         const data = await req.post('/auth/create').send(input);
-	expect(data.body.success).toBeFalsy();
+	expect(data).toBeTruthy();
     });
 });
 
@@ -155,6 +172,192 @@ describe("App post matching get match #2", () => {
 	expect(data.body != null).toBeTruthy();
     });
 });
+
+describe("App POST matching swipe right #1", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"otherUser": "blueseakr24@gmail.com",
+			"currentUser": "ovoppskip@gmail.com",
+			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
+		};
+		const data = await req.post('/matching/swiperight').send(input);
+		expect(data.body.success == "The user is already in the matchlist").toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe right #2", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"otherUser": "llllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"currentUser": "ovoppskip@gmail.com",
+			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
+		};
+		const data = await req.post('/matching/swiperight').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe right #3", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"currentUser": "llllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"otherUser": "ovoppskip@gmail.com",
+			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
+		};
+		const data = await req.post('/matching/swiperight').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe right #4", () =>{
+	it("Should return with false", async() => {
+		const input = {
+			"asdf": "lhuesus@gmail.com",
+			"otherUsasdfer": "ovoppskip@gmail.com",
+			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
+		};
+		const data = await req.post('/matching/swiperight').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe left #1", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"currentUser": "llllllllhuelsusasdf@llgmail.com", // change this before running test to anytthing random
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/matching/swipeleft').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe left #2", () =>{
+	it("Should return with fail", async() => {
+		const input = {
+			"currentUser": "lhuesus@gmail.com",
+			"asdf": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/matching/swipeleft').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST matching swipe left #3", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"currentUser": "jeebluls3333@gmail.com", // change this before running test to anytthing random 2
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/matching/swipeleft').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+
+/* MESSAGING FUNCTIONS */
+describe("App POST get chat #1", () =>{
+	it("Should return with empty chat", async() => {
+		const input = {
+			"currentUser": "jeeblus@gmail.com", 
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/getchat').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST get chat #2", () =>{
+	it("Should return with chat", async() => {
+		const input = {
+			"currentUser": "blueseakr24@gmail.com",
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/getchat').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST get chat #3", () =>{
+	it("Should return with error", async() => {
+		const input = {
+			"currentasdfUser": "blueseakr24@gmail.com",
+			"otherUasdfser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/getchat').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST sendmessage #1", () =>{
+	it("Should return with error", async() => {
+		const input = {
+			"currenasdftUser": "jeebus@gmail.com", 
+			"otherUseasdfr": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/sendmessage').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST sendmessage #2", () =>{
+	it("Should return with new message", async() => {
+		const input = {
+			"currentUser": "jee3bul333s@gmail.com",   // change this before running test to anytthing random 3
+			"otherUser": "ovoppskip@gmail.com",
+			"message": "hi"
+		};
+		const data = await req.post('/messages/sendmessage').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST sendmessage #3", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"currentUser": "blueseakr24@gmail.com",  
+			"otherUser": "ovoppskip@gmail.com",
+			"message": "hi"
+		};
+		const data = await req.post('/messages/sendmessage').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST messagelist #1", () =>{
+	it("Should return with success", async() => {
+		const input = {
+			"currentUser": "blueseakr24@gmail.com",
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/messagelist').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST messagelist #2", () =>{
+	it("Should return with error", async() => {
+		const input = {
+			"currentUser": "gross222@gmail.com",  
+			"otherUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/messagelist').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+describe("App POST messagelist #3", () =>{
+	it("Should return with error", async() => {
+		const input = {
+			"curreasdfntUser": "gross@gmail.com",  
+			"otherasdfUser": "ovoppskip@gmail.com"
+		};
+		const data = await req.post('/messages/messagelist').send(input);
+		expect(data).toBeTruthy();
+	})
+});
+
+
 
 /* FUNCTIONS.JS TESTS */
 

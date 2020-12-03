@@ -20,6 +20,7 @@ const req = supertest(backend);
  
  /* SIGNING IN AS A NEW USER */
 
+ block 
 describe("STARTING SIGNIN AS NEW USER: App post checks to see if the user exists in the database", () => {
     it("It should return False since we don't have the user in the database", async () => {
 	const input = {"email": "vincentyan8@test.com"};

@@ -149,14 +149,3 @@ function compare( a, b ) {
     cosineSim : cosineSim,
     querySelectDatabase : querySelectDatabase
   };
-
-function deleteUser (email) {
-    query = "DELETE FROM users WHERE ${email}";
-    queryDatabase(query, function(err, rowCount){
-	if (err) {
-	    console.log(err.message);
-	} else {
-	    console.log("Deleted");
-	}
-    });
-}
