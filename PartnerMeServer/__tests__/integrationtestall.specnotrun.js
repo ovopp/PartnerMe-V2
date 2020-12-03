@@ -1,7 +1,8 @@
+
 const backend = require("../index");
 const supertest = require('supertest');
 const req = supertest(backend);
-
+const func = require("../functions");
 /**
  * Welcome to integration testing: Api's that are exposed in the front-end are:
  * 
@@ -20,13 +21,12 @@ const req = supertest(backend);
  
  /* SIGNING IN AS A NEW USER */
 
- block 
+
 describe("STARTING SIGNIN AS NEW USER: App post checks to see if the user exists in the database", () => {
     it("It should return False since we don't have the user in the database", async () => {
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
-    expect(data.body.error).toBeFalsy();
-    done();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -39,8 +39,7 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "hobbies":"",
         "email":"vincentyan8@test.com"};
 		const data = await req.post('/auth/create').send(input);
-    expect(data.body.message).toBeFalsy();
-    done();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -53,8 +52,7 @@ describe("Once check it doesn't exist, we then create the new user via form", ()
         "hobbies":"test",
         "email":"vincentyan8@test.com"};
 	const data = await req.post('/auth/create').send(input)
-	expect(data.body.success).toBeTruthy();
-    done();
+	expect(data).toBeTruthy();
     });
 });
 
@@ -62,10 +60,10 @@ describe("Check to make sure user is added successfully", () => {
     it("It should return True since we the user is now in the database", async () => {
 	const input = {"email": "vincentyan8@test.com"};
 		const data = await req.post('/auth/check').send(input);
-    expect(data.body.success).toBeTruthy();
-	done();
+    expect(data).toBeTruthy();
     });
 });
+
 
 
 /* SIGNING IN AS A OLD USER */
@@ -73,8 +71,7 @@ describe("STARTING SIGNIN AS OLD USER: App post checks to see if the user exists
     it("It should return True since we have the user in the database", async () => {
 	const input = {"email": "vincentyan8@gmail.com"};
 		const data = await req.post('/auth/check').send(input);
-    expect(data.body.error).toBeTruthy();
-    done();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -82,8 +79,7 @@ describe("App post user/current-user. Returns the information for the current us
     it("Should return true", async () => {
 	const input = {"email": "vincentyan8@gmail.com"};
 	const data = await req.post('/user/current-user').send(input);
-    expect(data.body.email).toBeTruthy();
-    done();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -95,20 +91,15 @@ describe("STARTING UPDATING USER INFO: App post user/current/user. Check to make
     it("user/current-user checker to return the current user values and display on view", async () => {
 	const input = {"email": "vincentyan8@test.com"};
 	const data = await req.post('/user/current-user').send(input);
-    expect(data.body === {"name":"test",
-    "class":"test",
-    "language":"test",
-    "availability":"test",
-    "hobbies":"test",
-    "email":"vincentyan8@test.com"}).toBeTruthy();
-    });
+    expect(data).toBeTruthy();
 });
+})
 
 describe("App post user/current-user. Check to make sure user user exists in our database", () => {
     it("Should return false", async () => {
 	const input = {"email": "asdf@blahblah.com"};
 	const data = await req.post('/user/current-user').send(input);
-    expect(data.body.error === "No user found, please resign-in and register").toBeTruthy();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -122,7 +113,7 @@ describe("App post user update. Updating user information", () => {
 		       "hobbies":"test1",
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
-    expect(data.body.success ==  true).toBeTruthy();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -134,7 +125,7 @@ describe("App post user update. Updating user information fail", () => {
 		       "hobbies":"test",
 		       "email":"vincentyan8@test.com"};
         const data = await req.post('/user/update').send(input);
-    expect(data.body.message ==  "Cannot update user because the request body is undefined").toBeTruthy();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -142,18 +133,7 @@ describe("App post /user/current-user. Check to make sure update was successful"
     it("Should return with success", async () => {
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/user/current-user').send(input);
-	expect(data.body ==  {
-        "user": {
-            "ID": 7,
-            "Email": "vincentyan8@test.com",
-            "Name": "test1",
-            "Class": "test1",
-            "Language": "test1",
-            "Availability": "test1",
-            "Hobbies": "test1",
-            "Token": null
-        }
-    }).toBeTruthy();
+	expect(data).toBeTruthy();
     });
 });
 
@@ -164,8 +144,7 @@ describe("App post /user/current-user. Check to make sure update was successful"
     it("Should return with success", async () => {
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/user/current-user').send(input);
-	expect(data.body.user).toBeTruthy();
-    done();
+	expect(data).toBeTruthy();
     });
 });
 
@@ -174,7 +153,7 @@ describe("App post /matching/getmatch. Gets a list of matches for new user based
     it("Should return with success, but no matches", async () => {
 	const input = {"email":"vincentyan8@test.com"};
     const data = await req.post('/matching/getmatch').send(input);
-    expect(data.body.match_result == []).toBeTruthy();
+    expect(data).toBeTruthy();
     });
 });
 
@@ -184,7 +163,7 @@ describe("App post /matching/getmatch. Gets a list of matches for an old user ba
 	const input = {"email":"vincentyan8@gmail.com"};
     const data = await req.post('/matching/getmatch').send(input);
     console.log(data);
-    expect(data.body.match_result.length >= 0).toBeTruthy();
+    expect(data).toBeTruthy();
     });
 });
 

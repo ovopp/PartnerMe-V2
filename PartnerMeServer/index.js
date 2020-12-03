@@ -83,6 +83,7 @@ app.post('/user/current-user', (request,response)=>{
     else{
 	var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
 	func.querySelectDatabase(reqString, function(err, rowCount, rows){
+		console.log(rowCount);
 		if (rowCount == 0){
 		response.send({"error" : "No user found, please resign-in and register"} , 400);
 		}
@@ -173,7 +174,8 @@ app.post('/matching/getmatch', (req, response) => {
 app.post('/matching/swiperight', (req,response)=>{
     if(req.body.currentUser == undefined || req.body.otherUser == undefined || req.body.token == undefined){
 	response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
-    }
+	}
+	else{
     var usertoken = req.body.token;
     if(usertoken !== null){
         var payload = {
@@ -314,7 +316,8 @@ app.post('/matching/swiperight', (req,response)=>{
 		})
 	    }
 	});
-    }, 1000);
+	}, 1000);
+}
 });
 
 /**
@@ -387,7 +390,8 @@ app.post('/messages/getchat', (req,response)=>{
 app.post('/messages/sendmessage', (req, response)=>{
     if(req.body.otherUser == undefined || req.body.currentUser == undefined || req.body.message == undefined){
 	response.send("Message to the other user did not complete due to undefined request parameters" , 400);
-    }
+	}
+	else{
     var names = [req.body.otherUser, req.body.currentUser];
     names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
     var messagedb = client.db("PartnerMe").collection('chat');
@@ -419,7 +423,8 @@ app.post('/messages/sendmessage', (req, response)=>{
 		})
 	    }
 	})
-    }, 500);
+	}, 500)
+}
 });
 
 app.post('/messages/messagelist', (req,response)=>{

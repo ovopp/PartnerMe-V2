@@ -1,6 +1,5 @@
 const { Connection, Request } = require("tedious");
 
-
 const config = {
   authentication: {
     options: {
