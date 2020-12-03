@@ -1,7 +1,27 @@
 const backend = require("../../index");
 const supertest = require('supertest');
 const req = supertest(backend);
-const func = require("../../functions");
+var email1 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email2 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email3 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email4 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+console.log(email1);
+
+
+/**
+ * ENDPOINTS WHICH THE USER CAN ACCESS
+ *  post('/auth/check')
+ *  post('/auth/create')
+ *  post('/user/current-user')
+ *	post('/user/update')
+ *	post('/matching/getmatch')
+ *	post('/matching/swiperight)
+ *	post('/matching/swipeleft)
+ *	post('/messages/getchat)
+ *	post('/messages/sendmessage)
+ *	post('/messages/messagelist)
+ */
+
 
 /* Hello world function (for coverage) */
 describe("App get", () => {
@@ -178,7 +198,7 @@ describe("App POST matching swipe right #1", () =>{
 describe("App POST matching swipe right #2", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"otherUser": "lllllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"otherUser": email1, // change this before running test to anytthing random 1
 			"currentUser": "ovoppskip@gmail.com",
 			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
 		};
@@ -190,7 +210,7 @@ describe("App POST matching swipe right #2", () =>{
 describe("App POST matching swipe right #3", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "lllllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"currentUser": email1, // change this before running test to anytthing random 1
 			"otherUser": "ovoppskip@gmail.com",
 			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
 		};
@@ -214,7 +234,7 @@ describe("App POST matching swipe right #4", () =>{
 describe("App POST matching swipe left #1", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "llllllllhulelsusasdf@llgmail.com", // change this before running test to anytthing random
+			"currentUser": email2, // change this before running test to anytthing random
 			"otherUser": "ovoppskip@gmail.com"
 		};
 		const data = await req.post('/matching/swipeleft').send(input);
@@ -236,7 +256,7 @@ describe("App POST matching swipe left #2", () =>{
 describe("App POST matching swipe left #3", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "jeebluls333333@gmail.com", // change this before running test to anytthing random 2
+			"currentUser": email3, // change this before running test to anytthing random 2
 			"otherUser": "ovoppskip@gmail.com"
 		};
 		const data = await req.post('/matching/swipeleft').send(input);
@@ -293,7 +313,7 @@ describe("App POST sendmessage #1", () =>{
 describe("App POST sendmessage #2", () =>{
 	it("Should return with new message", async() => {
 		const input = {
-			"currentUser": "jee3bul333s@gmail.com",   // change this before running test to anytthing random 3
+			"currentUser": email4,   // change this before running test to anytthing random 3
 			"otherUser": "ovoppskip@gmail.com",
 			"message": "hi"
 		};

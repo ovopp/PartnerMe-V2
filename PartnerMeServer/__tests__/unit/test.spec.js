@@ -2,6 +2,12 @@ const backend = require("../../index");
 const supertest = require('supertest');
 const req = supertest(backend);
 const func = require("../../functions");
+
+var email1 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email2 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email3 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+var email4 = Math.floor(Math.random()*1000000).toString() + "@gmail.com";
+
 // const apicalls = require("../apicalls")
 
 // jest.mock("../../SQLquery") //Unsure about this line
@@ -130,7 +136,7 @@ describe("App post auth create #2", () => {
 		       "language":"test",
 		       "availability":"test",
 		       "hobbies":"test",
-		       "email":"test@10000.com"}; //change this to random
+		       "email":email1};
         const data = await req.post('/auth/create').send(input);
 	expect(data).toBeTruthy();
     });
@@ -179,7 +185,7 @@ describe("App POST matching swipe right #1", () =>{
 describe("App POST matching swipe right #2", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"otherUser": "llllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"otherUser": email2, // change this before running test to anytthing random 1
 			"currentUser": "ovoppskip@gmail.com",
 			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
 		};
@@ -191,7 +197,7 @@ describe("App POST matching swipe right #2", () =>{
 describe("App POST matching swipe right #3", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "llllllhuesus@gmail.com", // change this before running test to anytthing random 1
+			"currentUser":email2, // change this before running test to anytthing random 1
 			"otherUser": "ovoppskip@gmail.com",
 			"token": "faUrmzVBQl6V-WlXSfQ9ld:APA91bFR36ZEeh29B5DceQMUfr45c4SH5L5UpSp7PZ5bVLifqYYWZeD5ZaVQmS7Ln4PPx_lEO_jvJiLPfxFBQQJecBuWpcLA0q7ve-M-2qEhcj-n_k9QKRJdffc7mlD61NUGCWtoLWAv"
 		};
@@ -215,7 +221,7 @@ describe("App POST matching swipe right #4", () =>{
 describe("App POST matching swipe left #1", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "llllllllhuelsusasdf@llgmail.com", // change this before running test to anytthing random
+			"currentUser": email3, // change this before running test to anytthing random
 			"otherUser": "ovoppskip@gmail.com"
 		};
 		const data = await req.post('/matching/swipeleft').send(input);
@@ -237,7 +243,7 @@ describe("App POST matching swipe left #2", () =>{
 describe("App POST matching swipe left #3", () =>{
 	it("Should return with success", async() => {
 		const input = {
-			"currentUser": "jeebluls3333@gmail.com", // change this before running test to anytthing random 2
+			"currentUser": email4, // change this before running test to anytthing random 2
 			"otherUser": "ovoppskip@gmail.com"
 		};
 		const data = await req.post('/matching/swipeleft').send(input);
@@ -294,7 +300,7 @@ describe("App POST sendmessage #1", () =>{
 describe("App POST sendmessage #2", () =>{
 	it("Should return with new message", async() => {
 		const input = {
-			"currentUser": "jee3bul333s@gmail.com",   // change this before running test to anytthing random 3
+			"currentUser": email5,  
 			"otherUser": "ovoppskip@gmail.com",
 			"message": "hi"
 		};
@@ -355,7 +361,7 @@ describe("App POST messagelist #3", () =>{
 // First test we won't have a match since there isn't a test@gmail.com account
 describe("Cosine similarity", () => {
     it("Should return with empty user", async () => {
-	const req = {'body' : {'email' : 'test@gmail.com'}};
+	const req = {'body' : {'email' : email4}};
 	const query = `SELECT * FROM test WHERE class IN ( SELECT class FROM test WHERE email = '${req.body.email}')`;
 	const data = await func.cosineSim(req, query);
 	expect(data).toBeFalsy();
