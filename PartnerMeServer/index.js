@@ -212,6 +212,23 @@ app.post('/matching/swiperight', (req,response)=>{
     if(req.body.currentUser == undefined || req.body.otherUser == undefined || req.body.token == undefined){
 	response.send("Cannot obtain matchlist due to undefined request parameters" , 400);
     }
+    var usertoken = req.body.token;
+    if(usertoken !== null){
+        var payload = {
+          notification: {
+          title: "Alert",
+          body: "Match was found"
+          }
+        };
+  
+        admin.messaging().sendToDevice(usertoken, payload)
+          .then(function(response) {
+          console.log("Successfully sent message:", response);
+          })
+          .catch(function(error) {
+          console.log("Error sending message:", error);
+          });
+        }
     var matchlistdb = client.db("PartnerMe").collection('matchlist');
     var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
     var bool = false;
@@ -334,23 +351,6 @@ app.post('/matching/swiperight', (req,response)=>{
 				    }
 				})
 
-				var usertoken = req.body.token;
-
-				var payload = {
-				  notification: {
-					title: "Alert",
-					body: "Match was found"
-				  }
-				};
-	
-				admin.messaging().sendToDevice(usertoken, payload)
-				  .then(function(response) {
-					console.log("Successfully sent message:", response);
-				  })
-				  .catch(function(error) {
-					console.log("Error sending message:", error);
-				  });
-
 				response.send({'success' : "User was a match! Both updated"} , 200);
 				bool = true;
 			    }
@@ -453,7 +453,7 @@ app.post('/messages/sendmessage', (req, response)=>{
 				    function(err, item) {
 					if (err) throw err;
 					console.log("1 document inserted");
-					response.send({"chatlog": chatlog}, 200);
+					response.send({"chatlog": [{name:  req.body.currentUser, message: req.body.message}]}, 200);
 				    });
 	    }
 	    else{
