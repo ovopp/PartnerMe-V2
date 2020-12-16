@@ -47,9 +47,9 @@ This application uses a MEAN stack ( MongoDB, ExpressJS, Android, NodeJS )
 Contributions:
 
 Android Application Contributed Views:
-Daniel Kong
-Joshua Kim
+- Daniel Kong
+- Joshua Kim
 
 Tests and initial DB:
-Grady Thompson
+- Grady Thompson
 
