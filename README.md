@@ -1,4 +1,4 @@
-# PartnerMe(tm)
+# PartnerMe - V2 (tm)
 
 Solving the problem of finding the perfect study partner.
 
@@ -21,45 +21,15 @@ Solving the problem of finding the perfect study partner.
 
  insert methods, setup, testing
 
-## SQL Database
+## Mongo Database
+-  primary database for storing and processing data
 
--   Encrypted
--   Azure SQL server
+Contributions:
 
-## Tables
-
-###  users
--   ID INT NOT NULL IDENTITY
--   email VARCHAR (255)
--   name VARCHAR(255)
--   class VARCHAR(255)
--   language VARCHAR(255)
--   availability VARCHAR(255)
--   hobbies NVARCHAR(max)
--   token VARCHAR(max)
--   PRIMARY KEY (ID)
--   UNIQUE (email)
-###  meetings
--   ID INT NOT NULL IDENTITY
--   user1_ID INT
--   user2_ID INT
--   transcript NVARCHAR(max)
--   images NVARCHAR(max)
--   PRIMARY KEY (ID)
--   FOREIGN KEY (user1_ID) REFERENCES users(ID)
--   FOREIGN KEY (user2_ID) REFERENCES users(ID)
-###  messages
--   ID INT NOT NULL IDENTITY
--   user1_ID INT
--   user2_ID INT
--   date DATETIME
--   message VARCHAR(255)
--   PRIMARY KEY (ID)
--   FOREIGN KEY (user1_ID) REFERENCES users(ID)
--   FOREIGN KEY (user2_ID) REFERENCES users(ID)
-
-Group members:
-Vincent Yan
-Grady Thompson
-Joshua Kim
+Android Application Contributed Views:
 Daniel Kong
+Joshua Kim
+
+Tests and initial DB:
+Grady Thompson
+
