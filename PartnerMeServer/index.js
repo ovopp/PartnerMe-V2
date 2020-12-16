@@ -1,6 +1,5 @@
 require('events').EventEmitter.prototype._maxListeners = 0;
 const express = require('express');
-const request = require('request');
 const func = require('./functions');
 const app = express();
 
@@ -15,7 +14,6 @@ client.connect();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-const { InsufficientStorage } = require('http-errors');
 
 app.use(express.json());
 
@@ -81,24 +79,19 @@ app.post('/user/current-user', (request,response)=>{
 	response.send({"message": "Request query is invalid for current user"}, 400);
     }
     else{
-	var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
-	func.querySelectDatabase(reqString, function(err, rowCount, rows){
-		console.log(rowCount);
-		if (rowCount == 0){
-		response.send({"error" : "No user found, please resign-in and register"} , 400);
-		}
-		var item = {
-			"ID" : rows[0][0].value ,
-			"Email" : rows[0][1].value ,
-			"Name" : rows[0][2].value,
-			"Class" : rows[0][3].value,
-			"Language" : rows[0][4].value,
-			"Availability" : rows[0][5].value,
-			"Hobbies" : rows[0][6].value,
-			"Token" : rows[0][7].value
-		};
-		response.send({"user": item});
-	});	
+		var userDB = client.db("partnermev2").collection("user");
+		userDB.findOne({email: request.body.email}, function(err, item){
+			if(err){
+				response.send({"message": err} , 400);
+				throw err;
+			}
+			if(item == undefined){
+				response.send({"message": "User has not been created, please re-create"} , 400);
+			}
+			else{
+				response.send({user: item}, 200);
+			}
+		});
     }
 });
 
@@ -107,22 +100,22 @@ app.post('/user/current-user', (request,response)=>{
 app.post('/auth/check', (request, response)=>{
     // check with fb / google auth
     if(request.body.email == undefined){
-	response.send({"message": "No email provided for authentication"}, 400);
+		response.send({"message": "No email provided for authentication"}, 400);
     }
     else{
-	var reqString = `SELECT * FROM users WHERE email = '${request.body.email}'`;
-	func.queryDatabase(reqString, function(err, rowCount){
-	    if (err) {
-		console.error(err.message);
-	    } else {
-		if(rowCount !== 0){
-		    response.send({"success" : true});
-		}
-		else{
-		    response.send({"success" : false});
-		}
-	}
-	});
+		var userDB = client.db("partnermev2").collection("user");
+		userDB.findOne({email: request.body.email}, function(err, item){
+			if(err){
+				response.send({"message": err} , 400);
+				throw err;
+			}
+			if(item == undefined){
+				response.send({"message": "User has not been created, please re-create"} , 400);
+			}
+			else{
+				response.send({success: true}, 200);
+			}
+		});
     }
 });
 
@@ -133,16 +126,39 @@ app.post('/auth/create', (request, response)=>{
 		response.send({"message": "Create new user failed due to request fields not being valid"}, 400);
     }
     else{
-	var reqString = `INSERT INTO users (name, class, language, availability, hobbies, email) VALUES('${request.body.name}', '${request.body.class}', '${request.body.language}','${request.body.availability}', '${request.body.hobbies}', '${request.body.email}')`;
-
-	func.querySelectDatabase(reqString, function(err, rowCount, rows){
-	    if (err) {
-		console.error(err);
-		response.send({"error" : "User was not created due to error with connection to database"}, 400);
-	    } else {
-		response.send({"success": true}, 200);
-	    }
-	});
+		var userDB = client.db("partnermev2").collection("user");
+		userDB.findOne({email: request.body.email}, function(err, item){
+			if(err){
+				response.send({success: false} , 400);
+				throw err;
+			}
+			/**
+			 * If user does not exist, we have to insert the user into the DB
+			 */
+			if(item == undefined){
+				userDB.insertOne({
+					name: request.body.name,
+					class: request.body.class,
+					language: request.body.language,
+					availability: request.body.availability,
+					hobbies: request.body.hobbies,
+					email: request.body.email
+				}, function(err){
+					if(err){
+						// Error occured when creating user
+						response.send({success: false} , 400);
+						throw err;
+					}
+					else{
+						response.send({success: true}, 200)
+					}
+				});
+			}
+			else{
+				// User was already created
+				response.send({success: true}, 200)
+			}
+		});
     }
 });
 
@@ -205,7 +221,7 @@ app.post('/matching/swiperight', (req,response)=>{
 		match_list = [{'name' : req.body.otherUser}];
 		matchlistdb.insertOne({'user' : req.body.currentUser, 'matchlist' : match_list}, function(err,result){
 		    if(err) throw err;
-		})
+		});
 	    }
 	    else{
 		match_list = item.matchlist;
@@ -247,7 +263,7 @@ app.post('/matching/swiperight', (req,response)=>{
 			    if (err) throw err
 			})
 		    }
-		})
+		});
 	    }
 	    if(!bool){
 		/* looks into the other user's db to see if the currentUser is matched there */
@@ -326,32 +342,32 @@ app.post('/matching/swiperight', (req,response)=>{
  */
 app.post('/matching/swipeleft', (req,response)=>{
     if(req.body.currentUser == undefined || req.body.otherUser == undefined){
-	response.send("Cannot update method due to request object not valid");
+		response.send("Cannot update method due to request object not valid");
     }
     else{
-	var nomatchlistdb = client.db("PartnerMe").collection("nomatchlist");
-	nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err,item){
-	    if(err) throw err;
-	    if(item == undefined){
-		nomatchlistdb.insertOne({'user' : req.body.currentUser, 'nomatchlist' : [{'name' : req.body.otherUser}]}, function(err){
-		    if(err) throw err;
-		    response.send({'success' : "Successfully created and updated the nomatchlist for current user"} , 200);
+		var nomatchlistdb = client.db("PartnerMe").collection("nomatchlist");
+		nomatchlistdb.findOne({'user' : req.body.currentUser}, function(err,item){
+			if(err) throw err;
+			if(item == undefined){
+			nomatchlistdb.insertOne({'user' : req.body.currentUser, 'nomatchlist' : [{'name' : req.body.otherUser}]}, function(err){
+				if(err) throw err;
+				response.send({'success' : "Successfully created and updated the nomatchlist for current user"} , 200);
+			});
+			}
+			else{
+			var nomatchlist = item.nomatchlist;
+			nomatchlist.push({'name' : req.body.otherUser});
+			var update = {
+				$set : {
+				'nomatchlist' : nomatchlist
+				}
+			}
+			nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser} , update, function(err){
+				if(err) throw err;
+				response.send({'success' : "Successfully updated the nomatchlist for current user"} , 200);
+			});
+			}
 		});
-	    }
-	    else{
-		var nomatchlist = item.nomatchlist;
-		nomatchlist.push({'name' : req.body.otherUser});
-		var update = {
-		    $set : {
-			'nomatchlist' : nomatchlist
-		    }
-		}
-		nomatchlistdb.findOneAndUpdate({'user' : req.body.currentUser} , update, function(err){
-		    if(err) throw err;
-		    response.send({'success' : "Successfully updated the nomatchlist for current user"} , 200);
-		});
-	    }
-	})
     }
 });
 
@@ -394,7 +410,7 @@ app.post('/messages/sendmessage', (req, response)=>{
 	else{
     var names = [req.body.otherUser, req.body.currentUser];
     names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-    var messagedb = client.db("PartnerMe").collection('chat');
+    var messagedb = client.db("PartnerMe").collection('chatlogs');
     setTimeout(function() {
 	// Fetch the document that we modified
 	messagedb.findOne({'user1' : names[0], 'user2' : names[1]}, function(err, item){

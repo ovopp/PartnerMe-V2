@@ -1,28 +1,14 @@
-const { Connection, Request } = require("tedious");
 var similarity = require( 'compute-cosine-similarity' );
-
-const config = {
-    authentication: {
-    options: {
-      userName: "partnermeteam",
-      password: "df67POIL!#"
-    },
-    type: "default"
-  },
-  server: "partnerme.database.windows.net",
-  options: {
-    database: "PartnerMe",
-    encrypt: true,
-    rowCollectionOnRequestCompletion: true
-  }
-};
-
-const connection = new Connection(config);
 
 function cosineSim(req, reqString, callback){
     var return_list = [];
     var return_user_list = [];
     var user_hobby_list = [];
+    /**
+     * 1) Find all users that have the same class as I do -> use find()
+     * 2) In the item list, do what we did before
+     * 3) Profit
+     */
     const request = new Request(
       reqString,
        (err, rowCount, rows) => {
@@ -102,37 +88,6 @@ function cosineSim(req, reqString, callback){
       connection.execSql(request);
   }
 
-function queryDatabase(query, callback) {
-    const request = new Request(
-	query,
-	(err, rowCount) => {
-	    if (err) {
-		callback(err,null);
-	    } else {
-		console.log(`Success: ${rowCount} row(s) returned`);
-		callback(null,rowCount);
-	    }
-	}
-    );
-    console.log(connection.execSql(request));
-}
-
-function querySelectDatabase(query, callback) {
-    const request = new Request(
-	query,
-	(err, rowCount, rows) => {
-	    if (err) {
-		callback(err,null,null);
-	    } else {
-		console.log(`Success: ${rowCount} row(s) returned`);
-		callback(null,rowCount,rows);
-	    }
-	}
-    );
-    console.log(connection.execSql(request));
-}
-
-
 function compare( a, b ) {
     if ( a.similarity > b.similarity ){
       return -1;
@@ -145,7 +100,5 @@ function compare( a, b ) {
 
   module.exports = {
     compare : compare,
-    queryDatabase : queryDatabase,
-    cosineSim : cosineSim,
-    querySelectDatabase : querySelectDatabase
+    cosineSim : cosineSim
   };
