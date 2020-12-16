@@ -1,3 +1,4 @@
+block 
 const { Connection, Request } = require("tedious");
 
 const config = {

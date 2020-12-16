@@ -1,0 +1,172 @@
+Index: app/src/main/res/layout/fragment_second.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".secondFragment\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/second\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"second\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_second.xml	(revision a07fd2cf9a0bd55ee4cf0e37661ad069872fde7e)
++++ app/src/main/res/layout/fragment_second.xml	(date 1603761614880)
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+@@ -8,12 +7,51 @@
+     tools:context=".secondFragment">
+ 
+     <TextView
+-        android:id="@+id/second"
++        android:id="@+id/textView5"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="second"
+-        app:layout_constraintBottom_toBottomOf="parent"
++        android:layout_marginTop="48dp"
++        android:text="Account"
++        android:textSize="20sp"
++        android:textStyle="bold"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
++
++    <View
++        android:id="@+id/view2"
++        android:layout_width="wrap_content"
++        android:layout_height="1dp"
++        android:layout_marginTop="20dp"
++        android:background="@android:color/holo_red_light"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.0"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/textView5" />
++
++    <ImageView
++        android:id="@+id/profile_picture"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="128dp"
++        android:src="@drawable/googleicon"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/view2" />
++
++    <TextView
++        android:id="@+id/profile_name"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="48dp"
++        android:fontFamily="@font/baloo"
++        android:text="Name"
++        android:textSize="20sp"
++        android:textStyle="bold"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.501"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/profile_picture"
++        app:layout_constraintVertical_bias="0.042" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/myapplication/secondFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.os.Bundle;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\n/**\r\n * A simple {@link Fragment} subclass.\r\n * Use the {@link secondFragment#newInstance} factory method to\r\n * create an instance of this fragment.\r\n */\r\npublic class secondFragment extends Fragment {\r\n\r\n    // TODO: Rename parameter arguments, choose names that match\r\n    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER\r\n    private static final String ARG_PARAM1 = \"param1\";\r\n    private static final String ARG_PARAM2 = \"param2\";\r\n\r\n    // TODO: Rename and change types of parameters\r\n    private String mParam1;\r\n    private String mParam2;\r\n\r\n    public secondFragment() {\r\n        // Required empty public constructor\r\n    }\r\n\r\n    /**\r\n     * Use this factory method to create a new instance of\r\n     * this fragment using the provided parameters.\r\n     *\r\n     * @param param1 Parameter 1.\r\n     * @param param2 Parameter 2.\r\n     * @return A new instance of fragment secondFragment.\r\n     */\r\n    // TODO: Rename and change types and number of parameters\r\n    public static secondFragment newInstance(String param1, String param2) {\r\n        secondFragment fragment = new secondFragment();\r\n        Bundle args = new Bundle();\r\n        args.putString(ARG_PARAM1, param1);\r\n        args.putString(ARG_PARAM2, param2);\r\n        fragment.setArguments(args);\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        if (getArguments() != null) {\r\n            mParam1 = getArguments().getString(ARG_PARAM1);\r\n            mParam2 = getArguments().getString(ARG_PARAM2);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        return inflater.inflate(R.layout.fragment_second, container, false);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/myapplication/secondFragment.java	(revision a07fd2cf9a0bd55ee4cf0e37661ad069872fde7e)
++++ app/src/main/java/com/example/myapplication/secondFragment.java	(date 1603762009614)
+@@ -1,5 +1,6 @@
+ package com.example.myapplication;
+ 
++import android.net.Uri;
+ import android.os.Bundle;
+ 
+ import androidx.fragment.app.Fragment;
+@@ -7,6 +8,12 @@
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.ImageView;
++import android.widget.TextView;
++
++import com.google.android.gms.auth.api.signin.GoogleSignIn;
++import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
++import com.squareup.picasso.Picasso;
+ 
+ /**
+  * A simple {@link Fragment} subclass.
+@@ -59,6 +66,18 @@
+     public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+         // Inflate the layout for this fragment
+-        return inflater.inflate(R.layout.fragment_second, container, false);
++        View rootView = inflater.inflate(R.layout.fragment_second, container, false);
++        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
++
++        TextView name = rootView.findViewById(R.id.profile_name);
++        name.setText(acct.getDisplayName());
++
++        ImageView imageview = rootView.findViewById(R.id.profile_picture);
++        Uri uri = acct.getPhotoUrl();
++        if (uri != null) {
++            Picasso.get().load(acct.getPhotoUrl()).into(imageview);
++        }
++
++        return rootView;
+     }
+ }
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'com.google.gms.google-services'\r\n\r\nandroid {\r\n    compileSdkVersion 30\r\n    buildToolsVersion \"30.0.2\"\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.myapplication\"\r\n        minSdkVersion 21\r\n        targetSdkVersion 30\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        multiDexEnabled true\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: \"libs\", include: [\"*.jar\"])\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'\r\n    implementation 'com.google.android.material:material:1.2.1'\r\n    implementation 'androidx.navigation:navigation-fragment:2.3.1'\r\n    implementation 'androidx.navigation:navigation-ui:2.3.1'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    implementation 'com.google.firebase:firebase-messaging:17.3.4'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.2'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\r\n    implementation 'com.google.android.gms:play-services-auth:18.1.0'\r\n    implementation 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'\r\n    implementation platform('com.google.firebase:firebase-bom:25.12.0')\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.firebase:firebase-auth'\r\n    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'\r\n    implementation 'com.facebook.android:facebook-login:[8.1)'\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision a07fd2cf9a0bd55ee4cf0e37661ad069872fde7e)
++++ app/build.gradle	(date 1603751976586)
+@@ -43,8 +43,5 @@
+     implementation 'com.google.firebase:firebase-auth'
+     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+     implementation 'com.facebook.android:facebook-login:[8.1)'
+-
+-
+-
+-
++    implementation 'com.squareup.picasso:picasso:2.71828'
+ }
+Index: app/src/main/java/com/example/myapplication/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\nimport com.facebook.AccessToken;\r\nimport com.facebook.CallbackManager;\r\nimport com.facebook.FacebookCallback;\r\nimport com.facebook.FacebookException;\r\nimport com.facebook.FacebookSdk;\r\nimport com.facebook.appevents.AppEventsLogger;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.media.FaceDetector;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Toast;\r\n\r\nimport com.facebook.login.LoginManager;\r\nimport com.facebook.login.LoginResult;\r\nimport com.facebook.login.widget.LoginButton;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignIn;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInAccount;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInClient;\r\nimport com.google.android.gms.auth.api.signin.GoogleSignInOptions;\r\nimport com.google.android.gms.common.api.ApiException;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthCredential;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FacebookAuthProvider;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\n\r\nimport java.util.Arrays;\r\n\r\npublic class LoginActivity extends AppCompatActivity {\r\n\r\n    private GoogleSignInClient mGoogleSignInClient;\r\n    private int RC_SIGN_IN = 1;\r\n    private final String TAG = \"LoginActivity\";\r\n\r\n    //fb\r\n    private CallbackManager mCallbackManager;\r\n    private FirebaseAuth mFirebaseAuth;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n\r\n        // Configure sign-in to request the user's ID, email address, and basic\r\n        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.\r\n        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)\r\n                .requestEmail()\r\n                .build();\r\n\r\n        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);\r\n        findViewById(R.id.google_icon).setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                SignIn();\r\n            }\r\n        });\r\n\r\n        //fb\r\n        mFirebaseAuth = FirebaseAuth.getInstance();\r\n        FacebookSdk.sdkInitialize(getApplicationContext());\r\n        findViewById(R.id.fb_icon).setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                Fblogin();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void Fblogin() {\r\n        mCallbackManager = CallbackManager.Factory.create();\r\n        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList(\"email\",\"user_photos\",\"public_profile\"));\r\n\r\n        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {\r\n            @Override\r\n            public void onSuccess(LoginResult loginResult) {\r\n                Log.d(\"Facebook Authentication\", \"Success\" + loginResult);\r\n                handleFacebookAccessToken(loginResult.getAccessToken());\r\n            }\r\n\r\n            @Override\r\n            public void onCancel() {\r\n                Log.d(\"Facebook Authentication\", \"onCancel\");\r\n            }\r\n\r\n            @Override\r\n            public void onError(FacebookException error) {\r\n                Log.d(\"Facebook Authentication\", \"onError\" + error);\r\n            }\r\n        });\r\n    }\r\n\r\n    private void handleFacebookAccessToken(AccessToken token) {\r\n        Log.d(TAG, \"handleFacebookAccessToken:\" + token);\r\n\r\n        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());\r\n        mFirebaseAuth.signInWithCredential(credential)\r\n                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {\r\n                    @Override\r\n                    public void onComplete(@NonNull Task<AuthResult> task) {\r\n                        if (task.isSuccessful()) {\r\n                            // Sign in success, update UI with the signed-in user's information\r\n                            Log.d(TAG, \"signInWithCredential:success\");\r\n                            FirebaseUser user = mFirebaseAuth.getCurrentUser();\r\n                            updateFBUI(user);\r\n                        } else {\r\n                            // If sign in fails, display a message to the user.\r\n                            Log.w(TAG, \"signInWithCredential:failure\", task.getException());\r\n                            Toast.makeText(LoginActivity.this, \"Authentication failed.\",\r\n                                    Toast.LENGTH_SHORT).show();\r\n                            updateUI(null);\r\n                        }\r\n\r\n                        // ...\r\n                    }\r\n                });\r\n    }\r\n\r\n    private void updateFBUI(FirebaseUser user) {\r\n        if (user == null) {\r\n            Log.d(TAG, \"There is no user signed in!\");\r\n        }\r\n        Intent intent = new Intent(LoginActivity.this, MainActivity.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    //google\r\n\r\n    private void SignIn() {\r\n        Intent signInIntent = mGoogleSignInClient.getSignInIntent();\r\n        startActivityForResult(signInIntent, RC_SIGN_IN);\r\n    }\r\n\r\n    @Override\r\n    public void onActivityResult(int requestCode, int resultCode, Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);\r\n        if (requestCode == RC_SIGN_IN) {\r\n            // The Task returned from this call is always completed, no need to attach\r\n            // a listener.\r\n            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);\r\n            handleSignInResult(task);\r\n        }\r\n        else {\r\n            mCallbackManager.onActivityResult(requestCode, resultCode, data);\r\n        }\r\n    }\r\n\r\n    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {\r\n        try {\r\n            GoogleSignInAccount account = completedTask.getResult(ApiException.class);\r\n\r\n            // Signed in successfully, show authenticated UI.\r\n            updateUI(account);\r\n        } catch (ApiException e) {\r\n            // The ApiException status code indicates the detailed failure reason.\r\n            // Please refer to the GoogleSignInStatusCodes class reference for more information.\r\n            Log.w(TAG, \"signInResult:failed code=\" + e.getStatusCode());\r\n            updateUI(null);\r\n        }\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n        // Check for existing Google Sign In account, if the user is already signed in\r\n        // the GoogleSignInAccount will be non-null.\r\n        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);\r\n        updateUI(account);\r\n\r\n    }\r\n\r\n    private void updateUI(GoogleSignInAccount account) {\r\n        if (account == null) {\r\n            Log.d(TAG, \"There is no user signed in!\");\r\n        } else {\r\n            Log.d(TAG, \"Pref Name: \" + account.getDisplayName());\r\n            Log.d(TAG, \"Email: \" + account.getEmail());\r\n            Log.d(TAG, \"Given Name: \" + account.getGivenName());\r\n            Log.d(TAG, \"Family Name: \" + account.getFamilyName());\r\n            Log.d(TAG, \"Display URI: \" + account.getPhotoUrl());\r\n\r\n            //Send token to your back-end\r\n            //Move to another activity\r\n            Intent intent = new Intent(LoginActivity.this, MainActivity.class);\r\n            startActivity(intent);\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/myapplication/LoginActivity.java	(revision a07fd2cf9a0bd55ee4cf0e37661ad069872fde7e)
++++ app/src/main/java/com/example/myapplication/LoginActivity.java	(date 1603761088987)
+@@ -8,9 +8,12 @@
+ 
+ import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
++import androidx.fragment.app.FragmentManager;
++import androidx.fragment.app.FragmentTransaction;
+ 
+ import android.content.Intent;
+ import android.media.FaceDetector;
++import android.net.Uri;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.view.View;
+@@ -32,6 +35,7 @@
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+ 
++import java.net.URI;
+ import java.util.Arrays;
+ 
+ public class LoginActivity extends AppCompatActivity {

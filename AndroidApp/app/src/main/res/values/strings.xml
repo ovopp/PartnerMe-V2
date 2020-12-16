@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">PartnerMe</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="facebook_app_id">2516601118580534</string>
+    <string name="fb_login_protocol_scheme">fb2516601118580534</string>
+    <string name="todo">TODO</string>
+    <string name="find_your_study_group">Find Your Study Group</string>
+    <string name="hobbies">Hobbies</string>
+    <string name="language">Language</string>
+    <string name="classes">Class</string>
+    <string name="update_account">Update Account</string>
+    <string name="name">Name</string>
+    <string name="create_account">Create Account</string>
+    <string name="add_meeting">Add Meeting</string>
+    <string name="get_matches">Get Matches</string>
+    <string name="account">Account</string>
+    <string name="textview">TextView</string>
+    <string name="third">third</string>
+    <string name="matchurl">http://52.91.172.94:3000/matching/getmatch</string>
+    <string name="accounturl">http://52.91.172.94:3000/auth/create</string>
+    <string name="update_accounturl">http://52.91.172.94:3000/user/update</string>
+    <string name="tokenurl">http://52.91.172.94:3000/user/updatetoken</string>
+    <string name="pushnotif">http://52.91.172.94:3000/matching/swiperight</string>
+    <string-array name="availability_array">
+        <item>Morning</item>
+        <item>Afternoon</item>
+        <item>Evening</item>
+    </string-array>
+    <string name="chat_name">Chat</string>
+    <string name="input_placeholder">Write a message</string>
+</resources>
