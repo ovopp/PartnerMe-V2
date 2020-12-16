@@ -1,4 +1,18 @@
 # PartnerMe - V2 (tm)
+
+## Purpose
+
+• <b>Collaboration</b> at its core is essential in working on large scale software projects, and
+extremely important for individuals to share ideas, solve problems, and create networks
+of professional connections.
+
+• <b>PartnerMe</b> is an application that will provide students with a state of the art matching
+algorithm to connect users with their most suitable study buddies.
+
+• Upon matching, PartnerMe will set up and provide an environment to schedule meetings,
+location to share notes and ideas, and a platform to explore the educational community
+around them.
+
 ## Description
 
 - Solving the problem of finding the perfect study partner.
