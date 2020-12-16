@@ -34,6 +34,7 @@ This application uses a MEAN stack ( MongoDB, ExpressJS, Android, NodeJS )
 -  profile view
 -  matching view
 -  messenging view
+-  google sign-in / sign-up
 
 ## Database - MongoDB hosted on mLab
 
