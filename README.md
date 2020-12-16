@@ -13,9 +13,9 @@ algorithm to connect users with their most suitable study buddies.
 location to share notes and ideas, and a platform to explore the educational community
 around them.
 
-## Description
+## Tech Description
+This application uses a MEAN stack ( MongoDB, ExpressJS, Android, NodeJS )
 
-- Solving the problem of finding the perfect study partner.
 
 ## Backend - Express/NodeJs
 
