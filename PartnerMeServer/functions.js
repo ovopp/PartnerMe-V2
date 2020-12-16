@@ -1,4 +1,4 @@
-var similarity = require( 'compute-cosine-similarity' );
+var similarity = require("compute-cosine-similarity");
 
 function cosineSim(req, user_list){
   var return_list = [];
