@@ -43,6 +43,7 @@ This application uses a MEAN stack ( MongoDB, ExpressJS, Android, NodeJS )
 -  no-match-list
 -  message-list
 -  match-list
+-  chatlogs
 
 
 Contributions:
