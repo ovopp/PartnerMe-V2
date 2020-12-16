@@ -31,56 +31,47 @@ admin.initializeApp({
  */
 
 
-app.get('/', (request, response) => {
+app.get('/', (req, response) => {
     response.send('Hello');
 });
 
 // USER METHODS
 
-app.post('/user/update', (request, response)=>{
-  if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
-    response.send({"message": "Cannot update user because the request body is undefined"}, 400);
-  }
-  else{
-      var reqString = `UPDATE users SET name = '${request.body.name}' , language = '${request.body.language}', 
-  class = '${request.body.class}', availability = '${request.body.availability}', hobbies = '${request.body.hobbies}' WHERE email = '${request.body.email}'`;
-      func.queryDatabase(reqString, function(err, rowCount){
-	  if (err) {
-	      console.error(err.message);
-	      response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
-	  } else {
-	      response.send({"success" : true});
-	  }
-      });
-  }
-});
-
-app.post('/user/updatetoken', (req, response) =>{
-	if(req.body.email == undefined || req.body.token == undefined){
-		response.send({"message" : "Cannot update user token because the request body is undefined"}, 400);
+app.post('/user/update', (req, response)=>{
+	if(req.body.name == undefined || req.body.class == undefined || req.body.language == undefined || req.body.availability == undefined || req.body.hobbies == undefined || req.body.email == undefined){
+		response.send({"message": "Cannot update user because the request body is undefined"}, 400);
 	}
 	else{
-		var reqString = `UPDATE users SET token = '${req.body.token}' WHERE email = '${req.body.email}'`;
-		func.queryDatabase(reqString, function(err, rowCount){
+		var userDB = client.db("partnermev2").collection("user");
+		var update = {
+			$set:{
+				name: req.body.name,
+				class: req.body.class,
+				language: req.body.language,
+				availability: req.body.availability,
+				hobbies: req.body.hobbies,
+				email: req.body.email
+			}
+		}
+		userDB.findOneAndUpdate({email: req.body.email}, update, function(err){
 			if(err){
-				console.error(err.message);
-	      		response.send({"error" : "Update user failed. SQL connection to database failed to complete"}, 400);
+				throw err;
 			}
 			else{
-				response.send({"success": true});
+				response.send({success: true}, 200);
 			}
 		});
 	}
+});
 
-})
 
-app.post('/user/current-user', (request,response)=>{
-    if(request.body.email == undefined){
+app.post('/user/current-user', (req,response)=>{
+    if(req.body.email == undefined){
 	response.send({"message": "Request query is invalid for current user"}, 400);
     }
     else{
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({email: request.body.email}, function(err, item){
+		userDB.findOne({email: req.body.email}, function(err, item){
 			if(err){
 				response.send({"message": err} , 400);
 				throw err;
@@ -97,14 +88,14 @@ app.post('/user/current-user', (request,response)=>{
 
 //////// AUTH SERVICE ////////
 
-app.post('/auth/check', (request, response)=>{
+app.post('/auth/check', (req, response)=>{
     // check with fb / google auth
-    if(request.body.email == undefined){
+    if(req.body.email == undefined){
 		response.send({"message": "No email provided for authentication"}, 400);
     }
     else{
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({email: request.body.email}, function(err, item){
+		userDB.findOne({email: req.body.email}, function(err, item){
 			if(err){
 				response.send({"message": err} , 400);
 				throw err;
@@ -119,15 +110,15 @@ app.post('/auth/check', (request, response)=>{
     }
 });
 
-app.post('/auth/create', (request, response)=>{
+app.post('/auth/create', (req, response)=>{
     // check is user_id is already in db, return error
     // connect to auth db and update with user_id and password
-    if(request.body.name == undefined || request.body.class == undefined || request.body.language == undefined || request.body.availability == undefined || request.body.hobbies == undefined || request.body.email == undefined){
+    if(req.body.name == undefined || req.body.class == undefined || req.body.language == undefined || req.body.availability == undefined || req.body.hobbies == undefined || req.body.email == undefined){
 		response.send({"message": "Create new user failed due to request fields not being valid"}, 400);
     }
     else{
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({email: request.body.email}, function(err, item){
+		userDB.findOne({email: req.body.email}, function(err, item){
 			if(err){
 				response.send({success: false} , 400);
 				throw err;
@@ -137,12 +128,12 @@ app.post('/auth/create', (request, response)=>{
 			 */
 			if(item == undefined){
 				userDB.insertOne({
-					name: request.body.name,
-					class: request.body.class,
-					language: request.body.language,
-					availability: request.body.availability,
-					hobbies: request.body.hobbies,
-					email: request.body.email
+					name: req.body.name,
+					class: req.body.class,
+					language: req.body.language,
+					availability: req.body.availability,
+					hobbies: req.body.hobbies,
+					email: req.body.email
 				}, function(err){
 					if(err){
 						// Error occured when creating user
@@ -175,12 +166,16 @@ app.post('/matching/getmatch', (req, response) => {
 	response.send({"message": "User email parameter is invalid for matching"}, 400);
     }
     else{
-	var reqString =  `SELECT * FROM users WHERE class IN ( SELECT class FROM users WHERE email = '${req.body.email}')`;
-	// Attempt to connect and execute queries if connection goes through
-		func.cosineSim(req, reqString, function(result){
-			response.send({"match result" : result}, 200);
+		var userDB = client.db("partnermev2").collection("user");
+		userDB.find({class: req.body.class}).toArray(function(err, item){
+			if(err){
+				throw err;
+			}
+			else{
+				response.send(func.cosineSim(req,item));	
+			}
 		});
-	};
+	}
 });
 
 
@@ -240,7 +235,7 @@ app.post('/matching/swiperight', (req,response)=>{
 		    var update = { $set: {'matchlist' : match_list}};
 		    matchlistdb.findOneAndUpdate({'user' : req.body.currentUser}, update, function(err, result){
 			if (err) throw err;
-		    })
+		    });
 		}
 	    }
 	    /* Updates the current user's nomatchlist (removes them from the pool) */
