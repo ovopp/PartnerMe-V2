@@ -1,10 +1,11 @@
 # PartnerMe - V2 (tm)
+## Description
 
-Solving the problem of finding the perfect study partner.
+- Solving the problem of finding the perfect study partner.
 
-## NodeJS
+## Backend - Express/NodeJs
 
-## Testing
+### Testing
 
 -   install latest version of Node
 -   Download/pull source code
@@ -13,16 +14,21 @@ Solving the problem of finding the perfect study partner.
 -   A local server should be hosted on http:localhost:3000
 -   Can test endpoints using android app or POSTMAN
 
-## Android Application
+## Android Java Front-end
 
--insert things here-
+### Views
+-  profile view
+-  matching view
+-  messenging view
 
-## Database
+## Database - MongoDB hosted on mLab
 
- insert methods, setup, testing
+### Tables
+-  user
+-  no-match-list
+-  message-list
+-  match-list
 
-## Mongo Database
--  primary database for storing and processing data
 
 Contributions:
 
