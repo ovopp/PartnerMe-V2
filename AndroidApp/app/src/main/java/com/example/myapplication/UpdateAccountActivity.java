@@ -14,6 +14,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +25,12 @@ public class UpdateAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_main);
 
+        final Gson g = new Gson();
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        final String url = getResources().getString(R.string.update_accounturl);
-        final JSONObject object = new JSONObject();
+        final String urlUpdate = getResources().getString(R.string.update_accounturl);
+        final String urlUser = getResources().getString(R.string.currentuserurl);
+        final JSONObject updateObject = new JSONObject();
+        final JSONObject userObject = new JSONObject();
 
         final EditText nameField = findViewById(R.id.signup_nameField);
         final EditText languageField = findViewById(R.id.signup_Language);
@@ -36,6 +40,35 @@ public class UpdateAccountActivity extends AppCompatActivity {
 
         Button signupButton = findViewById(R.id.signupButton);
         signupButton.setHint("Update Account");
+        try {
+            userObject.put("email", getIntent().getStringExtra("email"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, urlUser, userObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        User userObject2;
+                        try {
+                            userObject2 = g.fromJson(response.get("user").toString(), User.class);
+                            nameField.setText(userObject2.getName());
+                            languageField.setText(userObject2.getLanguage());
+                            classField.setText(userObject2.getUserClass());
+                            hobbyField.setText(userObject2.getHobbies());
+                            setSpinner(availabilitySpinner,userObject2.getAvailability());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.toString());
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+
         signupButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -65,16 +98,16 @@ public class UpdateAccountActivity extends AppCompatActivity {
                 } else {
                     // send post request with fields
                     try {
-                        object.put("name", nameField.getText().toString());
-                        object.put("language", languageField.getText().toString().replaceAll(" ", "").toUpperCase());
-                        object.put("class", classField.getText().toString().replaceAll(" ", "").toUpperCase());
-                        object.put("availability", availabilitySpinner.getSelectedItem().toString());
-                        object.put("hobbies", hobbyField.getText().toString());
-                        object.put("email", getIntent().getStringExtra("email"));
+                        updateObject.put("name", nameField.getText().toString());
+                        updateObject.put("language", languageField.getText().toString().replaceAll(" ", "").toUpperCase());
+                        updateObject.put("class", classField.getText().toString().replaceAll(" ", "").toUpperCase());
+                        updateObject.put("availability", availabilitySpinner.getSelectedItem().toString());
+                        updateObject.put("hobbies", hobbyField.getText().toString());
+                        updateObject.put("email", getIntent().getStringExtra("email"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                    final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, urlUpdate, updateObject,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
@@ -102,5 +135,17 @@ public class UpdateAccountActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    void setSpinner(Spinner spinner, String word){
+        int i;
+        for(i = 1 ; i < 3 ; i ++){
+            if(spinner.getSelectedItem().toString().equals(word)){
+                return;
+            }
+            else{
+                spinner.setSelection(i);
+            }
+        }
     }
 }

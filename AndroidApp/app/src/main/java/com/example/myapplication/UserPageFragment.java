@@ -17,8 +17,7 @@ import com.squareup.picasso.Picasso;
 public class UserPageFragment extends Fragment {
 
     public static UserPageFragment newInstance() {
-        UserPageFragment fragment = new UserPageFragment();
-        return fragment;
+        return new UserPageFragment();
     }
 
     @Override
@@ -31,7 +30,7 @@ public class UserPageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_second, container, false);
         if (GoogleSignIn.getLastSignedInAccount(getContext()) != null) {
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
+            final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getContext());
             String name = acct.getDisplayName();
             Uri uri = acct.getPhotoUrl();
 
@@ -42,15 +41,17 @@ public class UserPageFragment extends Fragment {
             if (uri != null)
                 Picasso.get().load(uri).into(img);
             // Inflate the layout for this fragment
-        }
 
-        rootView.findViewById(R.id.update_account_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), UpdateAccountActivity.class);
-                startActivity(intent);
-            }
-        });
+
+            rootView.findViewById(R.id.update_account_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), UpdateAccountActivity.class);
+                    intent.putExtra("email", acct.getEmail());
+                    startActivity(intent);
+                }
+            });
+        }
 
         return rootView;
     }

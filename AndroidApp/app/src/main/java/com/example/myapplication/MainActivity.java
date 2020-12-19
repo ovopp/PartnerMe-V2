@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         if (GoogleSignIn.getLastSignedInAccount(this) != null) {
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
             try {
+                assert acct != null;
                 object.put("email", acct.getEmail());
                 object.put("token", s);
                 Log.d("TOKEN", s);
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             requestQueue.add(jsonObjectRequest);
-
         }
 
     }

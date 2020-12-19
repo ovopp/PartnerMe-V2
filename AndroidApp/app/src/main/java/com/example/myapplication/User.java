@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 public class User {
+    private String ID;
     private String Name;
     private String Class;
     private String Language;
