@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.squareup.picasso.Picasso;
 
 public class UserPageFragment extends Fragment {
@@ -51,8 +53,23 @@ public class UserPageFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+
+            rootView.findViewById(R.id.logoutButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GoogleSignInOptions gso = new GoogleSignInOptions.
+                            Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
+                            build();
+                    GoogleSignInClient googleSignInClient=GoogleSignIn.getClient(getContext(),gso);
+                    googleSignInClient.signOut();
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+
         }
 
         return rootView;
     }
+
 }
