@@ -45,12 +45,12 @@ app.post('/user/update', (req, response)=>{
 		var userDB = client.db("partnermev2").collection("user");
 		var update = {
 			$set:{
-				name: req.body.name,
-				class: req.body.class,
-				language: req.body.language,
-				availability: req.body.availability,
-				hobbies: req.body.hobbies,
-				email: req.body.email
+				Name: req.body.name,
+				Class: req.body.class,
+				Language: req.body.language,
+				Availability: req.body.availability,
+				Hobbies: req.body.hobbies,
+				Email: req.body.email
 			}
 		}
 		userDB.findOneAndUpdate({email: req.body.email}, update, function(err){
@@ -126,12 +126,12 @@ app.post('/auth/create', (req, response)=>{
 			 */
 			if(item == undefined){
 				userDB.insertOne({
-					name: req.body.name,
-					class: req.body.class,
-					language: req.body.language,
-					availability: req.body.availability,
-					hobbies: req.body.hobbies,
-					email: req.body.email
+					Name: req.body.name,
+					Class: req.body.class,
+					Language: req.body.language,
+					Availability: req.body.availability,
+					Hobbies: req.body.hobbies,
+					Email: req.body.email
 				}, function(err){
 					if(err){
 						response.send({"message": "Error occured when creating user"} , 400);
