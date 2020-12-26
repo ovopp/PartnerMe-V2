@@ -3,8 +3,6 @@ var similarity = require("compute-cosine-similarity");
 function cosineSim(currUser, user_list) {
   var return_list = [];
   var return_user_list = [];
-  console.log(currUser);
-  console.log(currUser.Hobbies);
   var user_hobby_list = currUser.Hobbies.split(", ");
   /**
    * 1) Find all users that have the same class as I do -> use find()
