@@ -169,11 +169,11 @@ app.post('/matching/getmatch', (req, response) => {
 				throw err;
 			}
 			else {
-				client.db("partnermev2").collection("user").findOne({ Email : req.body.email }, function(err, currUser){
+				userDB.findOne({ Email : req.body.email }, function(err, currUser){
 					if (err) {
 						throw err;
 					}
-					response.send(func.cosineSim(req, currUser, item));
+					response.send(func.cosineSim(currUser, item));
 				});
 			}
 		});
