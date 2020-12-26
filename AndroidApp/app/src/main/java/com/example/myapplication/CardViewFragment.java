@@ -77,13 +77,14 @@ public class CardViewFragment extends Fragment {
 
                         String otherUser = user.getEmail();
                         Log.d(TAG1, otherUser);
-                        String token = user.getToken();
-                        if (user.getToken() == null) {
-                            Log.d(TAG1, "token is null");
-                        } else {
-                            Log.d(TAG1, user.getToken());
-                            sendMatch(otherUser, token);
-                        }
+//                        String token = user.getToken();
+//                        if (user.getToken() == null) {
+//                            Log.d(TAG1, "token is null");
+//                        } else {
+//                            Log.d(TAG1, user.getToken());
+                        // TODO: Add token from FB
+                            sendMatch(otherUser, "test");
+                        // }
                     } catch (Exception e) {
                         System.out.println(e);
                     }
@@ -213,6 +214,7 @@ public class CardViewFragment extends Fragment {
         try {
             object.put("currentUser", currentUser);
             object.put("otherUser", otherUser);
+            // TODO: Fix the token with my own FB token
             object.put("token", token);
         } catch (JSONException e) {
             e.printStackTrace();
