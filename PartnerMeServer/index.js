@@ -174,7 +174,7 @@ app.post('/matching/getmatch', (req, response) => {
 						throw err;
 					}
 					console.log(item);
-					response.send(func.cosineSim(currUser, item));
+					response.send({"match result": func.cosineSim(currUser, item)}, 200);
 				});
 			}
 		});
