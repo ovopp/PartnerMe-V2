@@ -32,14 +32,14 @@ admin.initializeApp({
 
 
 app.get('/', (req, response) => {
-	response.send('Hello');
+	response.status(200).send('Hello');
 });
 
 // USER METHODS
 
 app.post('/user/update', (req, response) => {
 	if (req.body.name == undefined || req.body.class == undefined || req.body.language == undefined || req.body.availability == undefined || req.body.hobbies == undefined || req.body.email == undefined) {
-		response.send({ "message": "Cannot update user because the request body is undefined" }, 400);
+		response.status(400).send({ "message": "Cannot update user because the request body is undefined" });
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
@@ -58,7 +58,7 @@ app.post('/user/update', (req, response) => {
 				throw err;
 			}
 			else {
-				response.send({ success: true }, 200);
+				response.status(200).send({ success: true });
 			}
 		});
 	}
@@ -67,20 +67,20 @@ app.post('/user/update', (req, response) => {
 
 app.post('/user/current-user', (req, response) => {
 	if (req.body.email == undefined) {
-		response.send({ "message": "Request query is invalid for current user" }, 400);
+		response.status(400).send({ "message": "Request query is invalid for current user" });
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
 		userDB.findOne({ Email: req.body.email }, function (err, item) {
 			if (err) {
-				response.send({ "message": err }, 400);
+				response.status(400).send({ "message": err });
 				throw err;
 			}
 			if (item == undefined) {
-				response.send({ "message": "User has not been created, please re-create" }, 400);
+				response.status(400).send({ "message": "User has not been created, please re-create" });
 			}
 			else {
-				response.send({ user: item }, 200);
+				response.status(200).send({ user: item });
 			}
 		});
 	}
@@ -91,7 +91,7 @@ app.post('/user/current-user', (req, response) => {
 app.post('/auth/check', (req, response) => {
 	// check with fb / google auth
 	if (req.body.email == undefined) {
-		response.send({ "message": "No email provided for authentication" }, 400);
+		response.status(400).send({ "message": "No email provided for authentication" });
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
@@ -100,10 +100,10 @@ app.post('/auth/check', (req, response) => {
 				throw err;
 			}
 			if (item == undefined) {
-				response.send({ success: false, message: "User has not been created, please re-create" }, 200);
+				response.status(400).send({ success: false, message: "User has not been created, please re-create" });
 			}
 			else {
-				response.send({ success: true }, 200);
+				response.status(200).send({ success: true });
 			}
 		});
 	}
@@ -113,7 +113,7 @@ app.post('/auth/create', (req, response) => {
 	// check is user_id is already in db, return error
 	// connect to auth db and update with user_id and password
 	if (req.body.name == undefined || req.body.class == undefined || req.body.language == undefined || req.body.availability == undefined || req.body.hobbies == undefined || req.body.email == undefined) {
-		response.send({ "message": "Create new user failed due to request fields not being valid" }, 400);
+		response.status(400).send({ "message": "Create new user failed due to request fields not being valid" });
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
@@ -134,17 +134,17 @@ app.post('/auth/create', (req, response) => {
 					Email: req.body.email
 				}, function (err) {
 					if (err) {
-						response.send({ "message": "Error occured when creating user" }, 400);
+						response.status(400).send({ "message": "Error occured when creating user" }, 400);
 						throw err;
 					}
 					else {
-						response.send({ success: true }, 200)
+						response.status(200).send({ success: true });
 					}
 				});
 			}
 			else {
 				// User was already created
-				response.send({ success: true }, 200)
+				response.status(200).send({ success: true });
 			}
 		});
 	}
@@ -160,7 +160,7 @@ app.post('/auth/create', (req, response) => {
  */
 app.post('/matching/getmatch', (req, response) => {
 	if (req.body.email == undefined) {
-		response.send({ "message": "User email parameter is invalid for matching" }, 400);
+		response.status(400).send({ "message": "User email parameter is invalid for matching" });
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
@@ -169,7 +169,7 @@ app.post('/matching/getmatch', (req, response) => {
 				throw err;
 			}
 			else {
-				response.send({ "match result": func.cosineSim(req, item) }, 200);
+				response.status(200).send({ "match result": func.cosineSim(req, item) });
 			}
 		});
 	}
@@ -180,8 +180,8 @@ app.post('/matching/getmatch', (req, response) => {
  * Match swipe right
  */
 app.post('/matching/swiperight', (req, response) => {
-	if (req.body.currentUser == undefined || req.body.otherUser == undefined ){ //|| req.body.token == undefined) {
-		response.send("Cannot obtain matchlist due to undefined request parameters", 400);
+	if (req.body.currentUser == undefined || req.body.otherUser == undefined) { //|| req.body.token == undefined) {
+		response.status(400).send("Cannot obtain matchlist due to undefined request parameters");
 	}
 	else {
 		// var usertoken = req.body.token;
@@ -225,7 +225,7 @@ app.post('/matching/swiperight', (req, response) => {
 					item.matchlist.forEach(element => {
 						if (!bool) {
 							if (req.body.otherUser == element.name) {
-								response.send({ success: 'The user is already in the matchlist' }, 200);
+								response.status(200).send({ success: 'The user is already in the matchlist' }, 200);
 								bool = true;
 							}
 						}
@@ -273,7 +273,7 @@ app.post('/matching/swiperight', (req, response) => {
 							throw err;
 						}
 						if (item == undefined) {
-							response.send({ 'success': "User has not looked through matches, will notify you if matched" }, 200);
+							response.status(400).send({ 'success': "User has not looked through matches, will notify you if matched" });
 						}
 						else {
 							item.matchlist.forEach(element => {
@@ -336,7 +336,7 @@ app.post('/matching/swiperight', (req, response) => {
 											});
 										}
 									});
-									response.send({ 'success': "User was a match! Both updated" }, 200);
+									response.status(200).send({ 'success': "User was a match! Both updated" });
 									bool = true;
 								}
 							});
@@ -354,7 +354,7 @@ app.post('/matching/swiperight', (req, response) => {
  */
 app.post('/matching/swipeleft', (req, response) => {
 	if (req.body.currentUser == undefined || req.body.otherUser == undefined) {
-		response.send("Cannot update method due to request object not valid");
+		response.status(400).send("Cannot update method due to request object not valid");
 	}
 	else {
 		var nomatchlistdb = client.db("partnermev2").collection("no-match-list");
@@ -367,7 +367,7 @@ app.post('/matching/swipeleft', (req, response) => {
 					if (err) {
 						throw err;
 					}
-					response.send({ 'success': "Successfully created and updated the nomatchlist for current user" }, 200);
+					response.status(200).send({ 'success': "Successfully created and updated the nomatchlist for current user" }, 200);
 				});
 			}
 			else {
@@ -382,7 +382,7 @@ app.post('/matching/swipeleft', (req, response) => {
 					if (err) {
 						throw err;
 					}
-					response.send({ 'success': "Successfully updated the nomatchlist for current user" }, 200);
+					response.status(200).send({ 'success': "Successfully updated the nomatchlist for current user" }, 200);
 				});
 			}
 		});
@@ -396,7 +396,7 @@ app.post('/matching/swipeleft', (req, response) => {
  */
 app.post('/messages/getchat', (req, response) => {
 	if (req.body.otherUser == undefined || req.body.currentUser == undefined) {
-		response.send("Cannot obtain chatlog from other user due to undefined request parameters", 400);
+		response.status(400).send("Cannot obtain chatlog from other user due to undefined request parameters");
 	}
 	else {
 		var names = [req.body.otherUser, req.body.currentUser];
@@ -407,10 +407,10 @@ app.post('/messages/getchat', (req, response) => {
 			// Fetch the document that we modified
 			messagedb.findOne({ 'user1': names[0], 'user2': names[1] }, function (err, item) {
 				if (item == undefined) {
-					response.send({ "chatlog": [] }, 200);
+					response.status(200).send({ "chatlog": [] });
 				}
 				else {
-					response.send({ "chatlog": item.chatlog }, 200);
+					response.status(200).send({ "chatlog": item.chatlog });
 				}
 			});
 		}, 100);
@@ -423,7 +423,7 @@ app.post('/messages/getchat', (req, response) => {
  */
 app.post('/messages/sendmessage', (req, response) => {
 	if (req.body.otherUser == undefined || req.body.currentUser == undefined || req.body.message == undefined) {
-		response.send("Message to the other user did not complete due to undefined request parameters", 400);
+		response.status(400).send("Message to the other user did not complete due to undefined request parameters");
 	}
 	else {
 		var names = [req.body.otherUser, req.body.currentUser];
@@ -446,7 +446,7 @@ app.post('/messages/sendmessage', (req, response) => {
 							if (err) {
 								throw err;
 							}
-							response.send({ "chatlog": [{ name: req.body.currentUser, message: req.body.message }] }, 200);
+							response.status(400).send({ "chatlog": [{ name: req.body.currentUser, message: req.body.message }] });
 						});
 				}
 				else {
@@ -461,7 +461,7 @@ app.post('/messages/sendmessage', (req, response) => {
 						if (err) {
 							throw err;
 						}
-						response.send({ "chatlog": chatLog }, 200);
+						response.status(200).send({ "chatlog": chatLog });
 					});
 				}
 			});
@@ -471,7 +471,7 @@ app.post('/messages/sendmessage', (req, response) => {
 
 app.post('/messages/messagelist', (req, response) => {
 	if (req.body.currentUser == undefined) {
-		response.send("Cannot obtain messagelist due to undefined request parameters", 400);
+		response.status(400).send("Cannot obtain messagelist due to undefined request parameters");
 	}
 	else {
 		var messagelistdb = client.db("partnermev2").collection('message-list');
@@ -482,10 +482,10 @@ app.post('/messages/messagelist', (req, response) => {
 					throw err;
 				}
 				if (item == undefined) {
-					response.send([], 200);
+					response.status(200).send([]);
 				}
 				else {
-					response.send({ "listofusers": item.messagelist }, 200);
+					response.status(200).send({ "listofusers": item.messagelist });
 				}
 			});
 		}, 100);
