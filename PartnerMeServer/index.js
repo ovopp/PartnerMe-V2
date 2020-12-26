@@ -169,7 +169,7 @@ app.post('/matching/getmatch', (req, response) => {
 				throw err;
 			}
 			else {
-				userDB.findOne({ email : req.body.email }, function(err, currUser){
+				userDB.findOne({ Email : req.body.email }, function(err, currUser){
 					if (err) {
 						throw err;
 					}
