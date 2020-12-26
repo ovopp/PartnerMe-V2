@@ -164,12 +164,12 @@ app.post('/matching/getmatch', (req, response) => {
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.find({ Class: req.body.class }).toArray(function (err, item) {
+		userDB.find({ class: req.body.class }).toArray(function (err, item) {
 			if (err) {
 				throw err;
 			}
 			else {
-				userDB.findOne({ Email : req.body.email }, function(err, currUser){
+				userDB.findOne({ email : req.body.email }, function(err, currUser){
 					if (err) {
 						throw err;
 					}
