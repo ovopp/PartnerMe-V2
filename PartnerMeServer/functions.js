@@ -1,24 +1,29 @@
 var similarity = require("compute-cosine-similarity");
 
-function cosineSim(currUser, user_list) {
+function cosineSim(req, user_list) {
   var return_list = [];
   var return_user_list = [];
-  var user_hobby_list = currUser.Hobbies.split(", ");
+  var user_hobby_list = [];
   /**
    * 1) Find all users that have the same class as I do -> use find()
    * 2) In the item list, do what we did before
    * 3) Profit
    */
   for (var i = 0; i < user_list.length; i++) {
-    var item = {
-      "Name": user_list[i].Name,
-      "Class": user_list[i].Class,
-      "Language": user_list[i].Language,
-      "Availability": user_list[i].Availability,
-      "Hobbies": user_list[i].Hobbies,
-      "Email": user_list[i].Email
-    };
-    return_user_list.push(item);
+    if (req.body.Email == user_list[i].Email) {
+      user_hobby_list = user_list[i].Hobbies.split(", ");
+    }
+    else {
+      var item = {
+        "Name": user_list[i].Name,
+        "Class": user_list[i].Class,
+        "Language": user_list[i].Language,
+        "Availability": user_list[i].Availability,
+        "Hobbies": user_list[i].Hobbies,
+        "Email": user_list[i].Email
+      };
+      return_user_list.push(item);
+    }
   }
 
   for (let i = 0; i < return_user_list.length; i++) {
@@ -62,7 +67,6 @@ function cosineSim(currUser, user_list) {
     return_list.push({ "similarity": similarity(otherUserList, userHobbyListTmp), "userList": return_user_list[i] });
   }
   return_list.sort(compare);
-  console.log(return_list);
   return return_list;
 }
 

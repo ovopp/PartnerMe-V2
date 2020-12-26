@@ -169,13 +169,7 @@ app.post('/matching/getmatch', (req, response) => {
 				throw err;
 			}
 			else {
-				userDB.findOne({ Email : req.body.email }, function(err, currUser){
-					if (err) {
-						throw err;
-					}
-					console.log(item);
-					response.send({"match result": func.cosineSim(currUser, item)}, 200);
-				});
+				response.send({ "match result": func.cosineSim(req, item) }, 200);
 			}
 		});
 	}
