@@ -180,27 +180,27 @@ app.post('/matching/getmatch', (req, response) => {
  * Match swipe right
  */
 app.post('/matching/swiperight', (req, response) => {
-	if (req.body.currentUser == undefined || req.body.otherUser == undefined || req.body.token == undefined) {
+	if (req.body.currentUser == undefined || req.body.otherUser == undefined ){ //|| req.body.token == undefined) {
 		response.send("Cannot obtain matchlist due to undefined request parameters", 400);
 	}
 	else {
-		var usertoken = req.body.token;
-		if (usertoken !== null) {
-			var payload = {
-				notification: {
-					title: "Alert",
-					body: "Match was found"
-				}
-			};
+		// var usertoken = req.body.token;
+		// if (usertoken !== null) {
+		// 	var payload = {
+		// 		notification: {
+		// 			title: "Alert",
+		// 			body: "Match was found"
+		// 		}
+		// 	};
 
-			admin.messaging().sendToDevice(usertoken, payload)
-				.then(function (response) {
-					console.log("Successfully sent message:", response);
-				})
-				.catch(function (error) {
-					console.log("Error sending message:", error);
-				});
-		}
+		// 	admin.messaging().sendToDevice(usertoken, payload)
+		// 		.then(function (response) {
+		// 			console.log("Successfully sent message:", response);
+		// 		})
+		// 		.catch(function (error) {
+		// 			console.log("Error sending message:", error);
+		// 		});
+		// }
 		var matchlistdb = client.db("partnermev2").collection('match-list');
 		var nomatchlistdb = client.db("partnermev2").collection('no-match-list');
 		var bool = false;
