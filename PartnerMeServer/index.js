@@ -173,6 +173,7 @@ app.post('/matching/getmatch', (req, response) => {
 					if (err) {
 						throw err;
 					}
+					console.log(item);
 					response.send(func.cosineSim(currUser, item));
 				});
 			}
