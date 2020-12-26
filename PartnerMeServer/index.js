@@ -53,7 +53,7 @@ app.post('/user/update', (req, response) => {
 				Email: req.body.email
 			}
 		}
-		userDB.findOneAndUpdate({ email: req.body.email }, update, function (err) {
+		userDB.findOneAndUpdate({ Email: req.body.email }, update, function (err) {
 			if (err) {
 				throw err;
 			}
@@ -71,7 +71,7 @@ app.post('/user/current-user', (req, response) => {
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({ email: req.body.email }, function (err, item) {
+		userDB.findOne({ Email: req.body.email }, function (err, item) {
 			if (err) {
 				response.send({ "message": err }, 400);
 				throw err;
@@ -95,7 +95,7 @@ app.post('/auth/check', (req, response) => {
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({ email: req.body.email }, function (err, item) {
+		userDB.findOne({ Email: req.body.email }, function (err, item) {
 			if (err) {
 				throw err;
 			}
@@ -117,7 +117,7 @@ app.post('/auth/create', (req, response) => {
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.findOne({ email: req.body.email }, function (err, item) {
+		userDB.findOne({ Email: req.body.email }, function (err, item) {
 			if (err) {
 				throw err;
 			}
@@ -164,7 +164,7 @@ app.post('/matching/getmatch', (req, response) => {
 	}
 	else {
 		var userDB = client.db("partnermev2").collection("user");
-		userDB.find({ class: req.body.class }).toArray(function (err, item) {
+		userDB.find({ Class: req.body.class }).toArray(function (err, item) {
 			if (err) {
 				throw err;
 			}
@@ -201,8 +201,8 @@ app.post('/matching/swiperight', (req, response) => {
 					console.log("Error sending message:", error);
 				});
 		}
-		var matchlistdb = client.db("PartnerMe").collection('matchlist');
-		var nomatchlistdb = client.db("PartnerMe").collection('nomatchlist');
+		var matchlistdb = client.db("partnermev2").collection('match-list');
+		var nomatchlistdb = client.db("partnermev2").collection('no-match-list');
 		var bool = false;
 		setTimeout(function () {
 			// Fetch the document that we modified
@@ -212,7 +212,7 @@ app.post('/matching/swiperight', (req, response) => {
 				}
 				var match_list;
 				if (item == undefined) {
-					match_list = [{ 'name': req.body.otherUser }];
+					match_list = [{ name: req.body.otherUser }];
 					matchlistdb.insertOne({ 'user': req.body.currentUser, 'matchlist': match_list }, function (err) {
 						if (err) {
 							throw err;
@@ -225,7 +225,7 @@ app.post('/matching/swiperight', (req, response) => {
 					item.matchlist.forEach(element => {
 						if (!bool) {
 							if (req.body.otherUser == element.name) {
-								response.send({ 'success': 'The user is already in the matchlist' }, 200);
+								response.send({ success: 'The user is already in the matchlist' }, 200);
 								bool = true;
 							}
 						}
@@ -281,7 +281,7 @@ app.post('/matching/swiperight', (req, response) => {
 								 * When the user matches with the other user, we gotta update both messagelist
 								 */
 								if (element.name == req.body.currentUser) {
-									var messagelistdb = client.db("PartnerMe").collection('messagelist');
+									var messagelistdb = client.db("partnermev2").collection('message-list');
 									/* Update the current user's message list */
 									messagelistdb.findOne({ 'user': req.body.currentUser }, function (err, result) {
 										if (err) {
@@ -357,7 +357,7 @@ app.post('/matching/swipeleft', (req, response) => {
 		response.send("Cannot update method due to request object not valid");
 	}
 	else {
-		var nomatchlistdb = client.db("PartnerMe").collection("nomatchlist");
+		var nomatchlistdb = client.db("partnermev2").collection("no-match-list");
 		nomatchlistdb.findOne({ 'user': req.body.currentUser }, function (err, item) {
 			if (err) {
 				throw err;
@@ -401,7 +401,7 @@ app.post('/messages/getchat', (req, response) => {
 	else {
 		var names = [req.body.otherUser, req.body.currentUser];
 		names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-		var messagedb = client.db("PartnerMe").collection('chat');
+		var messagedb = client.db("partnermev2").collection('chatlogs');
 
 		setTimeout(function () {
 			// Fetch the document that we modified
@@ -428,7 +428,7 @@ app.post('/messages/sendmessage', (req, response) => {
 	else {
 		var names = [req.body.otherUser, req.body.currentUser];
 		names.sort(); // We want to sort the names so that user 1 and user 2 is defined alphabetically
-		var messagedb = client.db("PartnerMe").collection('chatlogs');
+		var messagedb = client.db("partnermev2").collection('chatlogs');
 		setTimeout(function () {
 			// Fetch the document that we modified
 			messagedb.findOne({ 'user1': names[0], 'user2': names[1] }, function (err, item) {
@@ -474,7 +474,7 @@ app.post('/messages/messagelist', (req, response) => {
 		response.send("Cannot obtain messagelist due to undefined request parameters", 400);
 	}
 	else {
-		var messagelistdb = client.db("PartnerMe").collection('messagelist');
+		var messagelistdb = client.db("partnermev2").collection('message-list');
 		setTimeout(function () {
 			// Fetch the document that we modified
 			messagelistdb.findOne({ 'user': req.body.currentUser }, function (err, item) {

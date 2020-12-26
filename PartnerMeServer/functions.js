@@ -10,17 +10,17 @@ function cosineSim(req, user_list){
    * 3) Profit
    */
   for(var i = 0; i < user_list.length; i++){
-    if(req.body.email == user_list[i].email){
-      user_hobby_list = user_list[i].hobbies.split(", ");
+    if(req.body.Email == user_list[i].Email){
+      user_hobby_list = user_list[i].Hobbies.split(", ");
     }
     else{
     var item = {
-      "Name" :user_list[i].name,
-      "Class" : user_list[i].class ,
-      "Language" : user_list[i].language,
-      "Availability" : user_list[i].availability,
-      "Hobbies" :user_list[i].hobbies,
-      "Email" : user_list[i].email
+      "Name" :user_list[i].Name,
+      "Class" : user_list[i].Class ,
+      "Language" : user_list[i].Language,
+      "Availability" : user_list[i].Availability,
+      "Hobbies" :user_list[i].Hobbies,
+      "Email" : user_list[i].Email
     };
     return_user_list.push(item);
     }
