@@ -62,6 +62,7 @@ function cosineSim(currUser, user_list) {
     return_list.push({ "similarity": similarity(otherUserList, userHobbyListTmp), "userList": return_user_list[i] });
   }
   return_list.sort(compare);
+  console.log(return_list);
   return return_list;
 }
 
